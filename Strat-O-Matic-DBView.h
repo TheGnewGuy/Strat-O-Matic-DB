@@ -9,23 +9,33 @@ class CStratOMaticDBSet;
 class CStratOMaticDBView : public CRecordView
 {
 protected: // create from serialization only
-	CStratOMaticDBView();
+//	CStratOMaticDBView();
 	DECLARE_DYNCREATE(CStratOMaticDBView)
 
 public:
-	enum{ IDD = IDD_STRATOMATICDB_FORM };
-	CStratOMaticDBSet* m_pSet;
+//	enum{ IDD = IDD_STRATOMATICDB_FORM };
+//	CStratOMaticDBSet* m_pSet;
+	enum { IDD = IDD_CBATTER_MULTI };
+	CBatter* m_pSet;
+	// Inline function definition
+	CStratOMaticDBDoc* GetDocument() const
+	{
+		return reinterpret_cast<CStratOMaticDBDoc*>(m_pDocument);
+	}
+	CBatter* GetRecordset();
+	virtual CRecordset* OnGetRecordset();
+	CStratOMaticDBView(); // constructor now public
 
 // Attributes
 public:
-	CStratOMaticDBDoc* GetDocument() const;
+//	CStratOMaticDBDoc* GetDocument() const;
 
 // Operations
 public:
 
 // Overrides
 public:
-	virtual CRecordset* OnGetRecordset();
+//	virtual CRecordset* OnGetRecordset();
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

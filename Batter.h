@@ -21,8 +21,8 @@ public:
 // to support both Unicode and these conversions).
 
 	long	m_BatterID;	//BatterID Key
-	CStringW	m_FirstName;
-	CStringW	m_LastName;
+	CString	m_FirstName;
+	CString	m_LastName;
 	BYTE	m_Pitcher;
 	BYTE	m_Catcher;
 	BYTE	m_FirstBase;

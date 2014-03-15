@@ -12,6 +12,8 @@
 //#include "Strat-O-Matic-DBSet.h"
 #include "Batter.h"
 #include "Strat-O-Matic-DBDoc.h"
+#include "Batter_MULTI_SET.h"
+#include "Batter.h"
 
 #include <propkey.h>
 
@@ -26,6 +28,7 @@ IMPLEMENT_DYNCREATE(CStratOMaticDBDoc, CDocument)
 BEGIN_MESSAGE_MAP(CStratOMaticDBDoc, CDocument)
 	ON_COMMAND(ID_DB_SELECT, &CStratOMaticDBDoc::OnDbSelect)
 	ON_COMMAND(ID_DB_ADD, &CStratOMaticDBDoc::OnDbAdd)
+	ON_COMMAND(ID_DB_CONVERT, &CStratOMaticDBDoc::OnDbConvert)
 END_MESSAGE_MAP()
 
 
@@ -33,12 +36,72 @@ END_MESSAGE_MAP()
 
 CStratOMaticDBDoc::CStratOMaticDBDoc()
 {
-	// TODO: add one-time construction code here
+	CString sDriver = _T("MICROSOFT ACCESS DRIVER (*.mdb, *.accdb)");
+	CString sDsn;
+	CString sFile = _T("C:\\Family\\SOURCE\\C\\Strat-O-Matic-DB\\Baseball.accdb");
+	CString SqlString;
 
+	// Build ODBC connection string
+	sDsn.Format(_T("ODBC;DRIVER={%s};DSN='';DBQ=%s"), sDriver, sFile);
+
+	TRY
+	{
+		// Open the database
+		m_pDatabase.Open(NULL, false, false, sDsn);
+	}
+	CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database Open error: " + e->m_strError);
+	}
+	END_CATCH;
+	TRY
+	{
+			// Allocate the recordset
+		m_pBatter_set = new CBatter(&m_pDatabase);
+
+		// Build the SQL statement
+		//SqlString = "SELECT BatterID, FirstName, LastName "
+		//	"FROM Batter";
+		SqlString = "SELECT * "
+			"FROM Batter";
+
+		// Execute the query
+		m_pBatter_set->Open(CRecordset::snapshot, SqlString, CRecordset::none);
+	}
+	CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database error: " + e->m_strError);
+	}
+	END_CATCH;
 }
 
 CStratOMaticDBDoc::~CStratOMaticDBDoc()
 {
+	TRY
+	{
+		if (m_pBatter_set->IsOpen())
+		m_pBatter_set->Close();
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database Close error: " + e->m_strError);
+	}
+	END_CATCH;
+
+	TRY
+	{
+		if (m_pDatabase.IsOpen())
+		m_pDatabase.Close();
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database Close error: " + e->m_strError);
+	}
+	END_CATCH;
 }
 
 BOOL CStratOMaticDBDoc::OnNewDocument()
@@ -174,13 +237,8 @@ void CStratOMaticDBDoc::OnDbSelect()
 			// Execute the query
 			rs.Open(CRecordset::snapshot, SqlString, CRecordset::none);
 
-			// Until all records have been gone through, the GetRecordCount will not be correct.
+			// Loop through all records and display popup.
 			while (!rs.IsEOF())
-			{
-				rs.MoveNext();
-			}
-			rs.MoveFirst();
-			for (int i = 0; i < rs.GetRecordCount(); i++)
 			{
 				AfxMessageBox("FirstName: " + (CString)rs.m_FirstName + " LastName: " + (CString)rs.m_LastName);
 				rs.MoveNext();
@@ -256,4 +314,9 @@ void CStratOMaticDBDoc::OnDbAdd()
 			AfxMessageBox("Database error: " + e->m_strError);
 	}
 	END_CATCH;
+}
+
+void CStratOMaticDBDoc::OnDbConvert()
+{
+	// TODO: Add your command handler code here
 }

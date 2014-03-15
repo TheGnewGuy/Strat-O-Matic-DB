@@ -9,9 +9,12 @@
 #include "Strat-O-Matic-DB.h"
 #endif
 
-#include "Strat-O-Matic-DBSet.h"
+//#include "Strat-O-Matic-DBSet.h"
 #include "Strat-O-Matic-DBDoc.h"
 #include "Strat-O-Matic-DBView.h"
+#include "Batter_MULTI_SET.h"
+#include "Batter.h"
+//#include "DBView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,7 +41,6 @@ CStratOMaticDBView::CStratOMaticDBView()
 {
 	m_pSet = NULL;
 	// TODO: add construction code here
-
 }
 
 CStratOMaticDBView::~CStratOMaticDBView()
@@ -52,6 +54,9 @@ void CStratOMaticDBView::DoDataExchange(CDataExchange* pDX)
 	// DDX_FieldText(pDX, IDC_MYEDITBOX, m_pSet->m_szColumn1, m_pSet);
 	// DDX_FieldCheck(pDX, IDC_MYCHECKBOX, m_pSet->m_bColumn2, m_pSet);
 	// See MSDN and ODBC samples for more information
+	CRecordView::DoDataExchange(pDX);
+	DDX_FieldText(pDX, IDC_EDIT_FirstName,
+		m_pSet->m_FirstName, m_pSet);
 }
 
 BOOL CStratOMaticDBView::PreCreateWindow(CREATESTRUCT& cs)
@@ -62,11 +67,33 @@ BOOL CStratOMaticDBView::PreCreateWindow(CREATESTRUCT& cs)
 	return CRecordView::PreCreateWindow(cs);
 }
 
+CBatter* CStratOMaticDBView::GetRecordset()
+{
+	ASSERT(m_pSet != NULL);
+	return m_pSet;
+}
+
+CRecordset* CStratOMaticDBView::OnGetRecordset()
+{
+	return m_pSet;
+}
+
 void CStratOMaticDBView::OnInitialUpdate()
 {
-	m_pSet = &GetDocument()->m_StratOMaticDBSet;
+//	m_pSet = &GetDocument()->m_StratOMaticDBSet;
+//	CRecordView::OnInitialUpdate();
+	BeginWaitCursor();
+	CStratOMaticDBDoc* pDoc = static_cast<CStratOMaticDBDoc*>(GetDocument());
+	m_pSet = pDoc->m_pBatter_set; // Get a pointer to the recordset
+	// Use the DB that is open for products recordset
+	m_pSet->m_pDatabase = &pDoc->m_pDatabase;
+	// Set the current product ID as parameter
+	m_pSet->m_FirstName = pDoc->m_pBatter_set->m_FirstName;
+	// Set the filter as product ID field
+	//m_pSet->m_strFilter =
+	//	“[ProductID] = ? AND[Orders].[OrderID] = [Order Details].[OrderID]”;
 	CRecordView::OnInitialUpdate();
-
+	EndWaitCursor();
 }
 
 
@@ -123,19 +150,19 @@ void CStratOMaticDBView::Dump(CDumpContext& dc) const
 	CRecordView::Dump(dc);
 }
 
-CStratOMaticDBDoc* CStratOMaticDBView::GetDocument() const // non-debug version is inline
-{
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CStratOMaticDBDoc)));
-	return (CStratOMaticDBDoc*)m_pDocument;
-}
+//CStratOMaticDBDoc* CStratOMaticDBView::GetDocument() const // non-debug version is inline
+//{
+//	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CStratOMaticDBDoc)));
+//	return (CStratOMaticDBDoc*)m_pDocument;
+//}
 #endif //_DEBUG
 
 
 // CStratOMaticDBView database support
-CRecordset* CStratOMaticDBView::OnGetRecordset()
-{
-	return m_pSet;
-}
+//CRecordset* CStratOMaticDBView::OnGetRecordset()
+//{
+//	return m_pSet;
+//}
 
 
 

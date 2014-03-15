@@ -2,7 +2,7 @@
 
 #pragma once
 
-// code generated on Sunday, March 09, 2014, 4:41 PM
+// code generated on Monday, March 10, 2014, 1:33 PM
 
 class CConferences : public CRecordset
 {
