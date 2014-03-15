@@ -318,5 +318,8 @@ void CStratOMaticDBDoc::OnDbAdd()
 
 void CStratOMaticDBDoc::OnDbConvert()
 {
-	// TODO: Add your command handler code here
+	// TODO: 
+	//		Open batter file
+	//		Read while Batter adding to Access file
+	//		Close Batter file
 }

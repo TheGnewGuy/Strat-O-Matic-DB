@@ -32,6 +32,7 @@ BEGIN_MESSAGE_MAP(CStratOMaticDBView, CRecordView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CStratOMaticDBView::OnFilePrintPreview)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
+	ON_BN_CLICKED(IDNEXT, &CStratOMaticDBView::OnClickedIdnext)
 END_MESSAGE_MAP()
 
 // CStratOMaticDBView construction/destruction
@@ -172,4 +173,10 @@ void CStratOMaticDBView::Dump(CDumpContext& dc) const
 void CStratOMaticDBView::OnDraw(CDC* /*pDC*/)
 {
 	// TODO: Add your specialized code here and/or call the base class
+}
+
+
+void CStratOMaticDBView::OnClickedIdnext()
+{
+	// TODO: Add your control notification handler code here
 }
