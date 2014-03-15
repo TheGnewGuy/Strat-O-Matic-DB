@@ -88,8 +88,8 @@
 #define IDS_EDIT_MENU                   306
 #define IDD_CBatter_MULTI               310
 #define IDD_CBATTER_MULTI               310
-#define IDC_EDIT1                       1000
 #define IDC_EDIT_FirstName              1000
+#define IDNEXT                          1001
 #define ID_DB_SELECT                    32771
 #define ID_DB_ADD                       32772
 #define ID_DB_CONVERT                   32773
@@ -100,7 +100,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        311
 #define _APS_NEXT_COMMAND_VALUE         32774
-#define _APS_NEXT_CONTROL_VALUE         1001
+#define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif
