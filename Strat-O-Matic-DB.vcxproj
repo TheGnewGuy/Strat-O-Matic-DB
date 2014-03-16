@@ -110,6 +110,7 @@
     <ClInclude Include="Conferences.h" />
     <ClInclude Include="DBView.h" />
     <ClInclude Include="Divisions.h" />
+    <ClInclude Include="FileStruct.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="Leagues.h" />
     <ClInclude Include="MainFrm.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="Conferences.cpp" />
     <ClCompile Include="DBView.cpp" />
     <ClCompile Include="Divisions.cpp" />
+    <ClCompile Include="FileStruct.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="Leagues.cpp" />
     <ClCompile Include="MainFrm.cpp" />

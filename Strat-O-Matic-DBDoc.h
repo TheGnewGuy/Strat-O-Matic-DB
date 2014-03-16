@@ -57,4 +57,5 @@ public:
 	CBatter_MULTI_SET m_Batter_MULTI_set;
 	CBatter* m_pBatter_set;
 	CDatabase m_pDatabase;
+	void ExportFileToDB(CString strDir, CString strTeamName);
 };

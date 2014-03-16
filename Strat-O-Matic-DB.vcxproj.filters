@@ -87,6 +87,9 @@
     <ClInclude Include="Batter_MULTI_SET.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FileStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Strat-O-Matic-DB.cpp">
@@ -150,6 +153,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Batter_MULTI_SET.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
