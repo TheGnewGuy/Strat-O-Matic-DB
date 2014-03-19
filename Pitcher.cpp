@@ -4,7 +4,7 @@
 
 // CPitcher implementation
 
-// code generated on Sunday, March 09, 2014, 4:47 PM
+// code generated on Tuesday, March 18, 2014, 9:15 PM
 
 #include "stdafx.h"
 #include "Pitcher.h"
@@ -46,8 +46,9 @@ CPitcher::CPitcher(CDatabase* pdb)
 	m_Balk = 0;
 	m_PitcherField = 0;
 	m_ER1 = 0;
+	m_TeamID = 0;
 	m_LastUpdateTime;
-	m_nFields = 34;
+	m_nFields = 35;
 	m_nDefaultType = dynaset;
 }
 //#error Security Issue: The connection string may contain a password
@@ -104,6 +105,7 @@ void CPitcher::DoFieldExchange(CFieldExchange* pFX)
 	RFX_Byte(pFX, _T("[Balk]"), m_Balk);
 	RFX_Byte(pFX, _T("[PitcherField]"), m_PitcherField);
 	RFX_Byte(pFX, _T("[ER1]"), m_ER1);
+	RFX_Long(pFX, _T("[TeamID]"), m_TeamID);
 	RFX_Date(pFX, _T("[LastUpdateTime]"), m_LastUpdateTime);
 
 }

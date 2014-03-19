@@ -2,7 +2,7 @@
 
 #pragma once
 
-// code generated on Sunday, March 09, 2014, 4:40 PM
+// code generated on Tuesday, March 18, 2014, 9:15 PM
 
 class CBatter : public CRecordset
 {
@@ -73,7 +73,8 @@ public:
 	CString	m_OBChanceLeft;
 	CString	m_OBChanceRight;
 	BYTE	m_BatterHits;
-	COleDateTime 	m_LastUpdateTime;
+	long	m_TeamID;	//Pointer to TeamID Key
+	COleDateTime	m_LastUpdateTime;
 
 // Overrides
 	// Wizard generated virtual function overrides

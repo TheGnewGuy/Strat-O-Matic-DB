@@ -427,9 +427,9 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	CFile exportBatter;
 	CFile exportPitcher;
 	CString exportFileName;
-	char exportData[200];
+//	char exportData[200];
 	CString strexportData;
-	float fBattingAverage, fSLG, fOnBasePercentage;
+//	float fBattingAverage, fSLG, fOnBasePercentage;
 	int i;
 	CString strTemp;
 	CString myFileName;
@@ -438,9 +438,9 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	LONG lPlayerSection = structBatter.m_RecordSize;
 	LONG lPitcherSection = structPitcher.m_RecordSize;
 	LONG position;
-	double fIP;
-	double fERA;
-	double fTRG;
+//	double fIP;
+//	double fERA;
+//	double fTRG;
 	char Bunting[5] = { 'A', 'B', 'C', 'D', 'E' };
 	char HitRun[4] = { 'A', 'B', 'C', 'D' };
 	char Stealing[7] = { '3', '2', 'A', 'B', 'C', 'D', 'E' };
@@ -516,7 +516,7 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 		rsBatter.m_LastName = lLastName;
 
 		rsBatter.m_FirstName = structBatter.m_PlayerName.Right(
-			structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(', '));
+			structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(", "));
 		rsBatter.m_Pitcher = structBatter.m_Pitcher;
 		rsBatter.m_Catcher = structBatter.m_Catcher;
 		rsBatter.m_FirstBase = structBatter.m_FirstBase;
@@ -567,6 +567,8 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 		rsBatter.m_OBChanceLeft = structBatter.m_OBChanceLeft;
 		rsBatter.m_OBChanceRight = structBatter.m_OBChanceRight;
 		rsBatter.m_BatterHits = structBatter.m_bBatterHits;
+		// Set to 1 until team table upload is created
+		rsBatter.m_TeamID = 1;
 
 		GetLocalTime(&lt);
 		rsBatter.m_LastUpdateTime = lt;
@@ -577,7 +579,7 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 
 		// Update the filter which is the WHERE portion
 		rsBatter.m_strFilter = "[FirstName] = '" + structBatter.m_PlayerName.Right(
-			structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(', ')) +
+			structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(", ")) +
 			"' AND [LastName] = '" + strLastName.c_str() + "'";
 		// Execute the query
 		rsBatter.Requery();
@@ -600,6 +602,7 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 		rsBatterStats.m_Games = structBatter.m_Games;
 		rsBatterStats.m_HBP = structBatter.m_HBP;
 		rsBatterStats.m_BatterID = rsBatter.m_BatterID ;
+		// Set to 1 until team table upload is created
 		rsBatterStats.m_TeamID = 1;
 
 		GetLocalTime(&lt);

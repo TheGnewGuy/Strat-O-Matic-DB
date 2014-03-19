@@ -2,7 +2,7 @@
 
 #pragma once
 
-// code generated on Sunday, March 09, 2014, 4:47 PM
+// code generated on Tuesday, March 18, 2014, 9:15 PM
 
 class CPitcher : public CRecordset
 {
@@ -21,29 +21,29 @@ public:
 // to support both Unicode and these conversions).
 
 	long	m_PitcherID;	//Pitcher Key
-	CStringW	m_FirstName;
-	CStringW	m_LastName;
-	CStringW	m_OBChanceHomeRun;
-	CStringW	m_OBChanceTriple;
-	CStringW	m_OBChanceDouble;
-	CStringW	m_OBChanceSingle;
-	CStringW	m_OBChanceWalk;
-	CStringW	m_ChanceDoublePlay;
-	CStringW	m_OBChanceHomeRunRight;
-	CStringW	m_OBChanceTripleRight;
-	CStringW	m_OBChanceDoubleRight;
-	CStringW	m_OBChanceSingleRight;
-	CStringW	m_OBChanceWalkRight;
-	CStringW	m_ChanceDoublePlayRight;
-	CStringW	m_OBChanceHomeRunLeft;
-	CStringW	m_OBChanceTripleLeft;
-	CStringW	m_OBChanceDoubleLeft;
-	CStringW	m_OBChanceSingleLeft;
-	CStringW	m_OBChanceWalkLeft;
-	CStringW	m_ChanceDoublePlayLeft;
-	CStringW	m_OBChanceBasic;
-	CStringW	m_OBChanceLeft;
-	CStringW	m_OBChanceRight;
+	CString	m_FirstName;
+	CString	m_LastName;
+	CString	m_OBChanceHomeRun;
+	CString	m_OBChanceTriple;
+	CString	m_OBChanceDouble;
+	CString	m_OBChanceSingle;
+	CString	m_OBChanceWalk;
+	CString	m_ChanceDoublePlay;
+	CString	m_OBChanceHomeRunRight;
+	CString	m_OBChanceTripleRight;
+	CString	m_OBChanceDoubleRight;
+	CString	m_OBChanceSingleRight;
+	CString	m_OBChanceWalkRight;
+	CString	m_ChanceDoublePlayRight;
+	CString	m_OBChanceHomeRunLeft;
+	CString	m_OBChanceTripleLeft;
+	CString	m_OBChanceDoubleLeft;
+	CString	m_OBChanceSingleLeft;
+	CString	m_OBChanceWalkLeft;
+	CString	m_ChanceDoublePlayLeft;
+	CString	m_OBChanceBasic;
+	CString	m_OBChanceLeft;
+	CString	m_OBChanceRight;
 	BYTE	m_Starter;
 	BYTE	m_Relief;
 	BYTE	m_Throws;
@@ -53,6 +53,7 @@ public:
 	BYTE	m_Balk;
 	BYTE	m_PitcherField;
 	BYTE	m_ER1;
+	long	m_TeamID;	//Pointer to TeamID Key
 	COleDateTime	m_LastUpdateTime;
 
 // Overrides

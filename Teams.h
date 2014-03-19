@@ -2,7 +2,7 @@
 
 #pragma once
 
-// code generated on Sunday, March 09, 2014, 4:44 PM
+// code generated on Tuesday, March 18, 2014, 9:21 PM
 
 class CTeams : public CRecordset
 {
@@ -21,14 +21,15 @@ public:
 // to support both Unicode and these conversions).
 
 	long	m_TeamID;
-	CStringW	m_TeamName;
-	CStringW	m_TeamNameShort;
-	CStringW	m_BallparkName;
+	CString	m_TeamName;
+	CString	m_TeamNameShort;
+	CString	m_BallparkName;
 	int	m_HomeWins;
 	int	m_HomeLosses;
 	int	m_AwayWins;
 	int	m_AwayLosses;
 	long	m_DivisionID;
+	long	m_TeamYear;
 	COleDateTime	m_LastUpdateTime;
 
 // Overrides

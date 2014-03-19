@@ -4,7 +4,7 @@
 
 // CTeams implementation
 
-// code generated on Sunday, March 09, 2014, 4:44 PM
+// code generated on Tuesday, March 18, 2014, 9:21 PM
 
 #include "stdafx.h"
 #include "Teams.h"
@@ -22,8 +22,9 @@ CTeams::CTeams(CDatabase* pdb)
 	m_AwayWins = 0;
 	m_AwayLosses = 0;
 	m_DivisionID = 0;
+	m_TeamYear = 0;
 	m_LastUpdateTime;
-	m_nFields = 10;
+	m_nFields = 11;
 	m_nDefaultType = dynaset;
 }
 //#error Security Issue: The connection string may contain a password
@@ -56,6 +57,7 @@ void CTeams::DoFieldExchange(CFieldExchange* pFX)
 	RFX_Int(pFX, _T("[AwayWins]"), m_AwayWins);
 	RFX_Int(pFX, _T("[AwayLosses]"), m_AwayLosses);
 	RFX_Long(pFX, _T("[DivisionID]"), m_DivisionID);
+	RFX_Long(pFX, _T("[TeamYear]"), m_TeamYear);
 	RFX_Date(pFX, _T("[LastUpdateTime]"), m_LastUpdateTime);
 
 }

@@ -4,7 +4,7 @@
 
 // CBatter implementation
 
-// code generated on Sunday, March 09, 2014, 4:40 PM
+// code generated on Tuesday, March 18, 2014, 9:15 PM
 
 #include "stdafx.h"
 #include "Batter.h"
@@ -66,8 +66,9 @@ CBatter::CBatter(CDatabase* pdb)
 	m_OBChanceLeft = L"";
 	m_OBChanceRight = L"";
 	m_BatterHits = 0;
+	m_TeamID = 0;
 	m_LastUpdateTime;
-	m_nFields = 54;
+	m_nFields = 55;
 	m_nDefaultType = dynaset;
 }
 //#error Security Issue: The connection string may contain a password
@@ -144,6 +145,7 @@ void CBatter::DoFieldExchange(CFieldExchange* pFX)
 	RFX_Text(pFX, _T("[OBChanceLeft]"), m_OBChanceLeft);
 	RFX_Text(pFX, _T("[OBChanceRight]"), m_OBChanceRight);
 	RFX_Byte(pFX, _T("[BatterHits]"), m_BatterHits);
+	RFX_Long(pFX, _T("[TeamID]"), m_TeamID);
 	RFX_Date(pFX, _T("[LastUpdateTime]"), m_LastUpdateTime);
 
 }
