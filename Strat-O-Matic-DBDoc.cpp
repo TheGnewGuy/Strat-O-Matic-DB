@@ -16,6 +16,7 @@
 #include "Batter_MULTI_SET.h"
 #include "Batter.h"
 #include "FileStruct.h"
+#include <string>
 
 #include <propkey.h>
 
@@ -419,6 +420,7 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	SYSTEMTIME lt;
 	CString SqlString;
 	CString lLastName;
+	std::string strLastName;
 	BatterStruct structBatter;
 	PitcherStruct structPitcher;
 	BYTE count;
@@ -495,9 +497,22 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 		
 		rsBatter.AddNew();
 
-		// This needs to change \' in the string to '' but only in the search latter in the code. (I think)
+		// When the last name is something like O'Tool, the "'" causes a problem
+		// with the SQL search. By editing the string to insert a double "'"
+		// in the search, the search works correctly.
 		lLastName = structBatter.m_PlayerName.Left(structBatter.m_PlayerName.Find(','));
-		lLastName.Replace('\'', 'X');
+		std::string str1 = lLastName;
+		if (str1.find('\'', 0) != std::string::npos)
+		{
+			std::string str2 = str1.substr(0, str1.find('\'', 0));
+			// Insert the double "'" in the string.
+			str2 = str2 + '\'' + '\'';
+			strLastName = str2 + str1.substr((str1.find('\'', 0) + 1), std::string::npos);
+		}
+		else
+		{
+			strLastName = lLastName;
+		}
 		rsBatter.m_LastName = lLastName;
 
 		rsBatter.m_FirstName = structBatter.m_PlayerName.Right(
@@ -563,7 +578,7 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 		// Update the filter which is the WHERE portion
 		rsBatter.m_strFilter = "[FirstName] = '" + structBatter.m_PlayerName.Right(
 			structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(', ')) +
-			"' AND [LastName] = '" + lLastName + "'";
+			"' AND [LastName] = '" + strLastName.c_str() + "'";
 		// Execute the query
 		rsBatter.Requery();
 
