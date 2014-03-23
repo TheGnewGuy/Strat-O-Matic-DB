@@ -22,17 +22,17 @@ public:
 
 	long	m_PitcherStatsID;	//Pitcher Stats Key
 	BYTE	m_Wins;
-	int	m_Loss;
-	int	m_Saves;
-	CStringW	m_InningsPitched;
+	int		m_Loss;
+	int		m_Saves;
+	CString	m_InningsPitched;
 	BYTE	m_ER;
 	BYTE	m_Hits;
 	BYTE	m_Walks;
 	BYTE	m_Strikeouts;
-	int	m_HomeRuns;
-	int	m_Games;
-	int	m_CompleteGames;
-	int	m_Starts;
+	int		m_HomeRuns;
+	int		m_Games;
+	int		m_CompleteGames;
+	int		m_Starts;
 	long	m_PitcherID;	//Pointer to PitcherID Key
 	long	m_TeamID;	//Pointer to TeamID Key
 	COleDateTime	m_LastUpdateTime;

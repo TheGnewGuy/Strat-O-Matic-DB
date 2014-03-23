@@ -4,7 +4,7 @@
 
 // CTeams implementation
 
-// code generated on Tuesday, March 18, 2014, 9:21 PM
+// code generated on Saturday, March 22, 2014, 4:19 PM
 
 #include "stdafx.h"
 #include "Teams.h"
@@ -21,8 +21,8 @@ CTeams::CTeams(CDatabase* pdb)
 	m_HomeLosses = 0;
 	m_AwayWins = 0;
 	m_AwayLosses = 0;
-	m_DivisionID = 0;
-	m_TeamYear = 0;
+	m_LeagueID = 0;
+	m_TeamYear = L"";
 	m_LastUpdateTime;
 	m_nFields = 11;
 	m_nDefaultType = dynaset;
@@ -56,8 +56,8 @@ void CTeams::DoFieldExchange(CFieldExchange* pFX)
 	RFX_Int(pFX, _T("[HomeLosses]"), m_HomeLosses);
 	RFX_Int(pFX, _T("[AwayWins]"), m_AwayWins);
 	RFX_Int(pFX, _T("[AwayLosses]"), m_AwayLosses);
-	RFX_Long(pFX, _T("[DivisionID]"), m_DivisionID);
-	RFX_Long(pFX, _T("[TeamYear]"), m_TeamYear);
+	RFX_Long(pFX, _T("[LeagueID]"), m_LeagueID);
+	RFX_Text(pFX, _T("[TeamYear]"), m_TeamYear);
 	RFX_Date(pFX, _T("[LastUpdateTime]"), m_LastUpdateTime);
 
 }

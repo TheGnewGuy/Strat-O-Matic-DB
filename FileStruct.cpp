@@ -388,12 +388,77 @@ BYTE BatterStruct::GetCountBatter(CString BatterFileName)
 {
 	BYTE count;
 	CFile myFile;
-	myFile.Open( BatterFileName,CFile::modeRead);
+	myFile.Open(BatterFileName, CFile::modeRead);
 	// Read Count
-	myFile.Read(&count,sizeof(count));
+	myFile.Read(&count, sizeof(count));
 	// Close file
 	myFile.Close();
 	return count;
+}
+
+CString BatterStruct::GetTeamBatter(CString BatterFileName)
+{
+	BYTE count;
+	CFile myFile;
+	char cTemp[41];
+	CString strTemp;
+
+	myFile.Open(BatterFileName, CFile::modeRead);
+	// Read Count
+	myFile.Read(&count, sizeof(count));
+	// Read team name
+	myFile.Read(cTemp, 40);
+	cTemp[40] = NULL;
+	strTemp = cTemp;
+	// Close file
+	myFile.Close();
+	return strTemp;
+}
+
+CString BatterStruct::GetShortTeamBatter(CString BatterFileName)
+{
+	BYTE count;
+	CFile myFile;
+	char cTemp[41];
+	CString strTemp;
+
+	myFile.Open(BatterFileName, CFile::modeRead);
+	// Read Count
+	myFile.Read(&count, sizeof(count));
+	// Read team name
+	myFile.Read(cTemp, 40);
+	cTemp[40] = NULL;
+	strTemp = cTemp;
+	// Read short team name
+	myFile.Read(cTemp, 3);
+	cTemp[3] = NULL;
+	strTemp = cTemp;
+	// Close file
+	myFile.Close();
+	return strTemp;
+}
+
+CString BatterStruct::GetBallparkBatter(CString BatterFileName)
+{
+	BYTE count;
+	CFile myFile;
+	char cTemp[41];
+	CString strTemp;
+
+	myFile.Open(BatterFileName, CFile::modeRead);
+	// Read Count
+	myFile.Read(&count, sizeof(count));
+	// Read team name
+	myFile.Read(cTemp, 40);
+	// Read short team name
+	myFile.Read(cTemp, 3);
+	// Read Ballpark
+	myFile.Read(cTemp, 30);
+	cTemp[30] = NULL;
+	strTemp = cTemp;
+	// Close file
+	myFile.Close();
+	return strTemp;
 }
 
 int BatterStruct::CopyBatterFile(CString inFileName, CString outFileName)

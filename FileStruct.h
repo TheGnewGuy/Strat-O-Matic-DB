@@ -97,6 +97,9 @@ public:
 	CString m_ChanceDoublePlayLeft;
 	int CopyBatterFile(CString inFileName, CString outFileName);
 	BYTE GetCountBatter(CString BatterFileName);
+	CString GetTeamBatter(CString BatterFileName);
+	CString GetShortTeamBatter(CString BatterFileName);
+	CString GetBallparkBatter(CString BatterFileName);
 	BYTE m_bBatterHits;
 	CString m_OBChanceRight;
 	CString m_OBChanceLeft;

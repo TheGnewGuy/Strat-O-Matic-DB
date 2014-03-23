@@ -2,7 +2,7 @@
 
 #pragma once
 
-// code generated on Tuesday, March 18, 2014, 9:21 PM
+// code generated on Saturday, March 22, 2014, 4:19 PM
 
 class CTeams : public CRecordset
 {
@@ -28,8 +28,8 @@ public:
 	int	m_HomeLosses;
 	int	m_AwayWins;
 	int	m_AwayLosses;
-	long	m_DivisionID;
-	long	m_TeamYear;
+	long	m_LeagueID;
+	CString	m_TeamYear;
 	COleDateTime	m_LastUpdateTime;
 
 // Overrides

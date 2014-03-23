@@ -12,6 +12,9 @@
 //#include "Strat-O-Matic-DBSet.h"
 #include "Batter.h"
 #include "BatterStats.h"
+#include "Pitcher.h"
+#include "PitcherStats.h"
+#include "Teams.h"
 #include "Strat-O-Matic-DBDoc.h"
 #include "Batter_MULTI_SET.h"
 #include "Batter.h"
@@ -423,6 +426,14 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	std::string strLastName;
 	BatterStruct structBatter;
 	PitcherStruct structPitcher;
+	CString tmpTeamID;
+	CString myTeam;
+	//CString strTempTeam;
+	CString myShortTeam;
+	CString myBallpark;
+	CString myYear;
+	CString strBatterFirstName;
+	CString strPitcherFirstName;
 	BYTE count;
 	CFile exportBatter;
 	CFile exportPitcher;
@@ -460,7 +471,21 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	exportFileName = strDir + "\\" + strTemp + ".txt"; // dir\XB000001.txt
 	myFileName = strDir + "\\TB" + strTeamName.Right(10);
 
-	// Allocate the recordset
+	// Allocate the Teams recordset
+	CTeams rsTeam(&m_pDatabase);
+	TRY
+	{
+		// Execute the query
+		rsTeam.Open(CRecordset::snapshot, NULL, CRecordset::none);
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database Teams RS error: " + e->m_strError);
+	}
+	END_CATCH;
+
+	// Allocate the Batter recordset
 	CBatter rsBatter(&m_pDatabase);
 	TRY
 	{
@@ -474,7 +499,7 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	}
 	END_CATCH;
 
-	// Allocate the recordset
+	// Allocate the Batter Statistics recordset
 	CBatterStats rsBatterStats(&m_pDatabase);
 	TRY
 	{
@@ -488,14 +513,54 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	}
 	END_CATCH;
 
+	// Process Team entry
+	// Skip "1965 " to start with the actual team name.
+	//AfxExtractSubString(myTeam, structBatter.GetTeamBatter(myFileName), 1, _T(' '));
+	myTeam = structBatter.GetTeamBatter(myFileName).Mid(5).TrimRight(' ');
+	myShortTeam = structBatter.GetShortTeamBatter(myFileName);
+	myBallpark = structBatter.GetBallparkBatter(myFileName);
+	AfxExtractSubString(myYear, structBatter.GetTeamBatter(myFileName), 0, _T(' '));
+	
+	// Determine if the team exists in DB.
+	// Update the filter which is the WHERE portion
+	rsTeam.m_strFilter = "[TeamName] = '" + myTeam + "' AND [TeamYear] = '" + myYear + "'";
+	// Execute the query
+	rsTeam.Requery();
+	if (!rsTeam.GetRowsFetched())
+	{
+		// Team does not exist so add it
+		rsTeam.AddNew();
+
+		rsTeam.m_TeamName = myTeam;
+		rsTeam.m_TeamNameShort = myShortTeam;
+		rsTeam.m_BallparkName = myBallpark;
+		rsTeam.m_HomeWins = 0;
+		rsTeam.m_HomeLosses = 0;
+		rsTeam.m_AwayWins = 0;
+		rsTeam.m_AwayLosses = 0;
+		rsTeam.m_LeagueID = 0;
+		rsTeam.m_TeamYear = myYear;
+
+		GetLocalTime(&lt);
+		rsTeam.m_LastUpdateTime = lt;
+
+		rsTeam.Update();
+	}
+
+	// Re-Execute the query
+	rsTeam.Requery();
+	if (!rsTeam.GetRowsFetched())
+	{
+		// Team does not exist so there is a problem
+		AfxMessageBox("Database Added Team Missing RS error: ");
+	}
+	
 	// A Team was selected so export all of the players
 	count = structBatter.GetCountBatter(myFileName);
 	for (i = 0; i<count; i++)
 	{
 		position = lTeamSection + (i*lPlayerSection);
 		structBatter.GetBatter(myFileName, position);
-		
-		rsBatter.AddNew();
 
 		// When the last name is something like O'Tool, the "'" causes a problem
 		// with the SQL search. By editing the string to insert a double "'"
@@ -513,240 +578,310 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 		{
 			strLastName = lLastName;
 		}
-		rsBatter.m_LastName = lLastName;
 
-		rsBatter.m_FirstName = structBatter.m_PlayerName.Right(
-			structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(", "));
-		rsBatter.m_Pitcher = structBatter.m_Pitcher;
-		rsBatter.m_Catcher = structBatter.m_Catcher;
-		rsBatter.m_FirstBase = structBatter.m_FirstBase;
-		rsBatter.m_SecondBase = structBatter.m_SecondBase;
-		rsBatter.m_ShortStop = structBatter.m_ShortStop;
-		rsBatter.m_ThirdBase = structBatter.m_ThirdBase;
-		rsBatter.m_LeftField = structBatter.m_LeftField;
-		rsBatter.m_CenterField = structBatter.m_CenterField;
-		rsBatter.m_RightField = structBatter.m_RightField;
-		rsBatter.m_Bunting = structBatter.m_bBunting;
-		rsBatter.m_HitRun = structBatter.m_bHitRun;
-		rsBatter.m_Running = structBatter.m_bRunning;
-		rsBatter.m_Stealing = structBatter.m_bStealing;
-		rsBatter.m_CatchArm = structBatter.m_bCatchArm;
-		rsBatter.m_OutArm = structBatter.m_bOutArm;
-		rsBatter.m_PowerRight = structBatter.m_bPowerR;
-		rsBatter.m_PowerLeft = structBatter.m_bPowerL;
-		rsBatter.m_Pass = structBatter.m_bPass;
-		rsBatter.m_TRate = structBatter.m_bTRate;
-		rsBatter.m_ER1 = structBatter.m_bER1;
-		rsBatter.m_ER2 = structBatter.m_bER2;
-		rsBatter.m_ER3 = structBatter.m_bER3;
-		rsBatter.m_ER4 = structBatter.m_bER4;
-		rsBatter.m_ER5 = structBatter.m_bER5;
-		rsBatter.m_ER6 = structBatter.m_bER6;
-		rsBatter.m_ER7 = structBatter.m_bER7;
-		rsBatter.m_ER8 = structBatter.m_bER8;
-		rsBatter.m_ER9 = structBatter.m_bER9;
-		rsBatter.m_OBChanceHomeRun = structBatter.m_OBChanceHomeRun;
-		rsBatter.m_OBChanceTriple = structBatter.m_OBChanceTriple;
-		rsBatter.m_OBChanceDouble = structBatter.m_OBChanceDouble;
-		rsBatter.m_OBChanceSingle = structBatter.m_OBChanceSingle;
-		rsBatter.m_OBChanceWalk = structBatter.m_OBChanceWalk;
-		rsBatter.m_ChanceDoublePlay = structBatter.m_ChanceDoublePlay;
-		rsBatter.m_OBChanceHomeRunRight = structBatter.m_OBChanceHomeRunRight;
-		rsBatter.m_OBChanceTripleRight = structBatter.m_OBChanceTripleRight;
-		rsBatter.m_OBChanceDoubleRight = structBatter.m_OBChanceDoubleRight;
-		rsBatter.m_OBChanceSingleRight = structBatter.m_OBChanceSingleRight;
-		rsBatter.m_OBChanceWalkRight = structBatter.m_OBChanceWalkRight;
-		rsBatter.m_ChanceDoublePlayRight = structBatter.m_ChanceDoublePlayRight;
-		rsBatter.m_OBChanceHomeRunLeft = structBatter.m_OBChanceHomeRunLeft;
-		rsBatter.m_OBChanceTripleLeft = structBatter.m_OBChanceTripleLeft;
-		rsBatter.m_OBChanceDoubleLeft = structBatter.m_OBChanceDoubleLeft;
-		rsBatter.m_OBChanceSingleLeft = structBatter.m_OBChanceSingleLeft;
-		rsBatter.m_OBChanceWalkLeft = structBatter.m_OBChanceWalkLeft;
-		rsBatter.m_ChanceDoublePlayLeft = structBatter.m_ChanceDoublePlayLeft;
-		rsBatter.m_OBChanceBasic = structBatter.m_OBChanceBasic;
-		rsBatter.m_OBChanceLeft = structBatter.m_OBChanceLeft;
-		rsBatter.m_OBChanceRight = structBatter.m_OBChanceRight;
-		rsBatter.m_BatterHits = structBatter.m_bBatterHits;
-		// Set to 1 until team table upload is created
-		rsBatter.m_TeamID = 1;
+		AfxExtractSubString(myYear, structBatter.GetTeamBatter(myFileName), 0, _T(' '));
 
-		GetLocalTime(&lt);
-		rsBatter.m_LastUpdateTime = lt;
+		strBatterFirstName = structBatter.m_PlayerName.Right(
+			structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(", ") - 2).TrimRight(' ');
 
-		rsBatter.Update();
+		// Create search for duplicate record here.
 
-		// Retrieve the ID of the batter that was just inserted.
-
-		// Update the filter which is the WHERE portion
-		rsBatter.m_strFilter = "[FirstName] = '" + structBatter.m_PlayerName.Right(
-			structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(", ")) +
-			"' AND [LastName] = '" + strLastName.c_str() + "'";
+		// Update the filter which is the WHERE portion to find the player
+		// based on name and current team.
+		tmpTeamID.Format("%d", rsTeam.m_TeamID);
+		rsBatter.m_strFilter = "[FirstName] = '" + strBatterFirstName + "'" +
+			" AND [LastName] = '" + strLastName.c_str() + "'" +
+			" AND [TeamID] = " + tmpTeamID;
 		// Execute the query
 		rsBatter.Requery();
+		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+		if (!rsBatter.GetRowsFetched() == 1)
+		{
+			// Batter does not exist Therefore add this batter
 
-		rsBatterStats.AddNew();
+			rsBatter.AddNew();
 
-		rsBatterStats.m_AB = structBatter.m_AB;
-		rsBatterStats.m_Runs = structBatter.m_Runs;
-		rsBatterStats.m_Hits = structBatter.m_Hits;
-		rsBatterStats.m_RBI = structBatter.m_RBI;
-		rsBatterStats.m_2B = structBatter.m_2B;
-		rsBatterStats.m_3B = structBatter.m_3B;
-		rsBatterStats.m_HomeRuns = structBatter.m_HomeRuns;
-		rsBatterStats.m_Walk = structBatter.m_Walk;
-		rsBatterStats.m_StrikeOut = structBatter.m_StrikeOut;
-		rsBatterStats.m_ReachedOnError = structBatter.m_ReachedOnError;
-		rsBatterStats.m_Sacrifice = structBatter.m_Sacrifice;
-		rsBatterStats.m_StolenBase = structBatter.m_StolenBase;
-		rsBatterStats.m_CS = structBatter.m_CS;
-		rsBatterStats.m_Games = structBatter.m_Games;
-		rsBatterStats.m_HBP = structBatter.m_HBP;
-		rsBatterStats.m_BatterID = rsBatter.m_BatterID ;
-		// Set to 1 until team table upload is created
-		rsBatterStats.m_TeamID = 1;
+			rsBatter.m_LastName = lLastName;
+			rsBatter.m_FirstName = strBatterFirstName;
+			rsBatter.m_Pitcher = structBatter.m_Pitcher;
+			rsBatter.m_Catcher = structBatter.m_Catcher;
+			rsBatter.m_FirstBase = structBatter.m_FirstBase;
+			rsBatter.m_SecondBase = structBatter.m_SecondBase;
+			rsBatter.m_ShortStop = structBatter.m_ShortStop;
+			rsBatter.m_ThirdBase = structBatter.m_ThirdBase;
+			rsBatter.m_LeftField = structBatter.m_LeftField;
+			rsBatter.m_CenterField = structBatter.m_CenterField;
+			rsBatter.m_RightField = structBatter.m_RightField;
+			rsBatter.m_Bunting = structBatter.m_bBunting;
+			rsBatter.m_HitRun = structBatter.m_bHitRun;
+			rsBatter.m_Running = structBatter.m_bRunning;
+			rsBatter.m_Stealing = structBatter.m_bStealing;
+			rsBatter.m_CatchArm = structBatter.m_bCatchArm;
+			rsBatter.m_OutArm = structBatter.m_bOutArm;
+			rsBatter.m_PowerRight = structBatter.m_bPowerR;
+			rsBatter.m_PowerLeft = structBatter.m_bPowerL;
+			rsBatter.m_Pass = structBatter.m_bPass;
+			rsBatter.m_TRate = structBatter.m_bTRate;
+			rsBatter.m_ER1 = structBatter.m_bER1;
+			rsBatter.m_ER2 = structBatter.m_bER2;
+			rsBatter.m_ER3 = structBatter.m_bER3;
+			rsBatter.m_ER4 = structBatter.m_bER4;
+			rsBatter.m_ER5 = structBatter.m_bER5;
+			rsBatter.m_ER6 = structBatter.m_bER6;
+			rsBatter.m_ER7 = structBatter.m_bER7;
+			rsBatter.m_ER8 = structBatter.m_bER8;
+			rsBatter.m_ER9 = structBatter.m_bER9;
+			rsBatter.m_OBChanceHomeRun = structBatter.m_OBChanceHomeRun;
+			rsBatter.m_OBChanceTriple = structBatter.m_OBChanceTriple;
+			rsBatter.m_OBChanceDouble = structBatter.m_OBChanceDouble;
+			rsBatter.m_OBChanceSingle = structBatter.m_OBChanceSingle;
+			rsBatter.m_OBChanceWalk = structBatter.m_OBChanceWalk;
+			rsBatter.m_ChanceDoublePlay = structBatter.m_ChanceDoublePlay;
+			rsBatter.m_OBChanceHomeRunRight = structBatter.m_OBChanceHomeRunRight;
+			rsBatter.m_OBChanceTripleRight = structBatter.m_OBChanceTripleRight;
+			rsBatter.m_OBChanceDoubleRight = structBatter.m_OBChanceDoubleRight;
+			rsBatter.m_OBChanceSingleRight = structBatter.m_OBChanceSingleRight;
+			rsBatter.m_OBChanceWalkRight = structBatter.m_OBChanceWalkRight;
+			rsBatter.m_ChanceDoublePlayRight = structBatter.m_ChanceDoublePlayRight;
+			rsBatter.m_OBChanceHomeRunLeft = structBatter.m_OBChanceHomeRunLeft;
+			rsBatter.m_OBChanceTripleLeft = structBatter.m_OBChanceTripleLeft;
+			rsBatter.m_OBChanceDoubleLeft = structBatter.m_OBChanceDoubleLeft;
+			rsBatter.m_OBChanceSingleLeft = structBatter.m_OBChanceSingleLeft;
+			rsBatter.m_OBChanceWalkLeft = structBatter.m_OBChanceWalkLeft;
+			rsBatter.m_ChanceDoublePlayLeft = structBatter.m_ChanceDoublePlayLeft;
+			rsBatter.m_OBChanceBasic = structBatter.m_OBChanceBasic;
+			rsBatter.m_OBChanceLeft = structBatter.m_OBChanceLeft;
+			rsBatter.m_OBChanceRight = structBatter.m_OBChanceRight;
+			rsBatter.m_BatterHits = structBatter.m_bBatterHits;
+			rsBatter.m_TeamID = rsTeam.m_TeamID;
 
-		GetLocalTime(&lt);
-		rsBatterStats.m_LastUpdateTime = lt;
+			GetLocalTime(&lt);
+			rsBatter.m_LastUpdateTime = lt;
 
-		rsBatterStats.Update();
+			rsBatter.Update();
+
+			// Retrieve the ID of the batter that was just inserted.
+
+			// Update the filter which is the WHERE portion to find the player
+			// based on name and current team.
+			tmpTeamID.Format("%d", rsTeam.m_TeamID);
+			rsBatter.m_strFilter = "[FirstName] = '" + strBatterFirstName + "'" +
+				" AND [LastName] = '" + strLastName.c_str() + "'" +
+				" AND [TeamID] = " + tmpTeamID ;
+			// Execute the query
+			rsBatter.Requery();
+			// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+			if (!rsBatter.GetRowsFetched() == 1)
+			{
+				// Batter does not exist so there is a problem
+				AfxMessageBox("Database Requery of batter incorrect RS error: ");
+			}
+
+			// Create test to check for duplicate records here
+
+			rsBatterStats.AddNew();
+
+			rsBatterStats.m_AB = structBatter.m_AB;
+			rsBatterStats.m_Runs = structBatter.m_Runs;
+			rsBatterStats.m_Hits = structBatter.m_Hits;
+			rsBatterStats.m_RBI = structBatter.m_RBI;
+			rsBatterStats.m_2B = structBatter.m_2B;
+			rsBatterStats.m_3B = structBatter.m_3B;
+			rsBatterStats.m_HomeRuns = structBatter.m_HomeRuns;
+			rsBatterStats.m_Walk = structBatter.m_Walk;
+			rsBatterStats.m_StrikeOut = structBatter.m_StrikeOut;
+			rsBatterStats.m_ReachedOnError = structBatter.m_ReachedOnError;
+			rsBatterStats.m_Sacrifice = structBatter.m_Sacrifice;
+			rsBatterStats.m_StolenBase = structBatter.m_StolenBase;
+			rsBatterStats.m_CS = structBatter.m_CS;
+			rsBatterStats.m_Games = structBatter.m_Games;
+			rsBatterStats.m_HBP = structBatter.m_HBP;
+			// BatterID always points back to initial Batter for fixed statistics
+			rsBatterStats.m_BatterID = rsBatter.m_BatterID ;
+			// TeamID can point to any team as this connects the statistics
+			// that change based on actual play.
+			rsBatterStats.m_TeamID = rsTeam.m_TeamID;
+
+			GetLocalTime(&lt);
+			rsBatterStats.m_LastUpdateTime = lt;
+
+			rsBatterStats.Update();
+		}
+		else
+		{
+			// Batter already exists.
+			//AfxMessageBox("Database Batter is already in DB: " + strBatterFirstName);
+		}
 
 	}
 	rsBatterStats.Close();
 
 	rsBatter.Close();
 
-	//// Process Pitcher file
-	//strTemp = "XP" + strTeamName.Left(20);
-	//exportFileName = strDir + "\\" + strTemp + ".txt"; // dir\XB000001.txt
-	//myFileName = strDir + "\\TP" + strTeamName.Right(10);
-	//exportPitcher.Open(exportFileName, CFile::modeCreate | CFile::modeWrite);
-	//sprintf_s(exportData, "Team Name,Pitcher Name,,IP,ER,Hits,Walks,Strikeouts,");
-	//strexportData = exportData;
-	//exportPitcher.Write(strexportData, strexportData.GetLength());
-	//sprintf_s(exportData, "Homeruns,Hold,Wins,Loss,Saves,Starter,Relief,Throws,");
-	//strexportData = exportData;
-	//exportPitcher.Write(strexportData, strexportData.GetLength());
-	//sprintf_s(exportData, "ChB,ChL,ChR,");
-	//strexportData = exportData;
-	//exportPitcher.Write(strexportData, strexportData.GetLength());
-	//sprintf_s(exportData, "ERA,TRG,");
-	//strexportData = exportData;
-	//exportPitcher.Write(strexportData, strexportData.GetLength());
-	//sprintf_s(exportData, "Starts,");
-	//strexportData = exportData;
-	//exportPitcher.Write(strexportData, strexportData.GetLength());
-	//sprintf_s(exportData, "Games,Completed Games,");
-	//strexportData = exportData;
-	//exportPitcher.Write(strexportData, strexportData.GetLength());
-	//sprintf_s(exportData, "Ch1B,Ch2B,Ch3B,ChHR,ChW,ChDP,");
-	//strexportData = exportData;
-	//exportPitcher.Write(strexportData, strexportData.GetLength());
-	//sprintf_s(exportData, "Ch1BL,Ch2BL,Ch3BL,ChHRL,ChWL,ChDPL,");
-	//strexportData = exportData;
-	//exportPitcher.Write(strexportData, strexportData.GetLength());
-	//sprintf_s(exportData, "Ch1BR,Ch2BR,Ch3BR,ChHRR,ChWR,ChDPR,");
-	//strexportData = exportData;
-	//exportPitcher.Write(strexportData, strexportData.GetLength());
-	//sprintf_s(exportData, "Wild Pitch,Balk,Fielding,ErrorRating,Bunting\n");
-	//strexportData = exportData;
-	//exportPitcher.Write(strexportData, strexportData.GetLength());
+	// Process Pitcher file
+	strTemp = "XP" + strTeamName.Left(20);
+	exportFileName = strDir + "\\" + strTemp + ".txt"; // dir\XB000001.txt
+	myFileName = strDir + "\\TP" + strTeamName.Right(10);
 
-	//// A Team was selected so export all of the players
-	//count = structPitcher.GetCountPitcher(myFileName);
-	//for (i = 0; i<count; i++)
-	//{
-	//	position = lCountSection + (i*lPitcherSection);
-	//	structPitcher.GetPitcher(myFileName, position);
-	//	strexportData.Empty();
+	// Allocate the Pitcher recordset
+	CPitcher rsPitcher(&m_pDatabase);
+	TRY
+	{
+		// Execute the query
+		rsPitcher.Open(CRecordset::snapshot, NULL, CRecordset::none);
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database Pitcher RS error: " + e->m_strError);
+	}
+	END_CATCH;
 
-	//	fIP = atof(structPitcher.m_IP);
+	// Allocate the Pitcher Statistics recordset
+	CPitcherStats rsPitcherStats(&m_pDatabase);
+	TRY
+	{
+		// Execute the query
+		rsPitcherStats.Open(CRecordset::snapshot, NULL, CRecordset::none);
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database Pitcher Statistics RS error: " + e->m_strError);
+	}
+	END_CATCH;
 
-	//	if (fIP == 0)
-	//	{
-	//		fERA = 0;
-	//		fTRG = 0;
-	//	}
-	//	else
-	//	{
-	//		fERA = (double)(structPitcher.m_ER * 9) / fIP;
-	//		fTRG = (double)((structPitcher.m_Hits + structPitcher.m_Walks) * 9) / fIP;
-	//	}
+	// A Team was selected so export all of the players
+	count = structPitcher.GetCountPitcher(myFileName);
+	for (i = 0; i<count; i++)
+	{
+		position = lCountSection + (i*lPitcherSection);
+		structPitcher.GetPitcher(myFileName, position);
 
-	//	sprintf_s(exportData, "%s,%s,",
-	//		strTeamName.Left(40),
-	//		structPitcher.m_PitcherName);
-	//	strexportData = exportData;
-	//	exportPitcher.Write(strexportData, strexportData.GetLength());
-	//	sprintf_s(exportData, "%1.2f,%i,%i,%i,%i,%i,%i,%i,%i,",
-	//		fIP,
-	//		structPitcher.m_ER,
-	//		structPitcher.m_Hits,
-	//		structPitcher.m_Walks,
-	//		structPitcher.m_Strikeouts,
-	//		structPitcher.m_HomeRuns,
-	//		PHold[structPitcher.m_Hold],
-	//		structPitcher.m_Wins,
-	//		structPitcher.m_Loss);
-	//	strexportData = exportData;
-	//	exportPitcher.Write(strexportData, strexportData.GetLength());
-	//	sprintf_s(exportData, "%i,%i,%i,%c,%s,%s,%s,",
-	//		structPitcher.m_Saves,
-	//		structPitcher.m_Starter,
-	//		structPitcher.m_Relief,
-	//		BatterHits[structPitcher.m_Throws],
-	//		structPitcher.m_OBChanceBasic,
-	//		structPitcher.m_OBChanceLeft,
-	//		structPitcher.m_OBChanceRight);
-	//	strexportData = exportData;
-	//	exportPitcher.Write(strexportData, strexportData.GetLength());
-	//	sprintf_s(exportData, "%1.2f,%1.2f,",
-	//		fERA,
-	//		fTRG);
-	//	strexportData = exportData;
-	//	exportPitcher.Write(strexportData, strexportData.GetLength());
-	//	sprintf_s(exportData, "%i,",
-	//		structPitcher.m_Starts);
-	//	strexportData = exportData;
-	//	exportPitcher.Write(strexportData, strexportData.GetLength());
-	//	sprintf_s(exportData, "%i,%i,",
-	//		structPitcher.m_Games, structPitcher.m_CompGames);
-	//	strexportData = exportData;
-	//	exportPitcher.Write(strexportData, strexportData.GetLength());
-	//	sprintf_s(exportData, "%s,%s,%s,%s,%s,%s,",
-	//		structPitcher.m_OBChanceSingle,
-	//		structPitcher.m_OBChanceDouble,
-	//		structPitcher.m_OBChanceTriple,
-	//		structPitcher.m_OBChanceHomeRun,
-	//		structPitcher.m_OBChanceWalk,
-	//		structPitcher.m_ChanceDoublePlay);
-	//	strexportData = exportData;
-	//	exportPitcher.Write(strexportData, strexportData.GetLength());
-	//	sprintf_s(exportData, "%s,%s,%s,%s,%s,%s,",
-	//		structPitcher.m_OBChanceSingleLeft,
-	//		structPitcher.m_OBChanceDoubleLeft,
-	//		structPitcher.m_OBChanceTripleLeft,
-	//		structPitcher.m_OBChanceHomeRunLeft,
-	//		structPitcher.m_OBChanceWalkLeft,
-	//		structPitcher.m_ChanceDoublePlayLeft);
-	//	strexportData = exportData;
-	//	exportPitcher.Write(strexportData, strexportData.GetLength());
-	//	sprintf_s(exportData, "%s,%s,%s,%s,%s,%s,",
-	//		structPitcher.m_OBChanceSingleRight,
-	//		structPitcher.m_OBChanceDoubleRight,
-	//		structPitcher.m_OBChanceTripleRight,
-	//		structPitcher.m_OBChanceHomeRunRight,
-	//		structPitcher.m_OBChanceWalkRight,
-	//		structPitcher.m_ChanceDoublePlayRight);
-	//	strexportData = exportData;
-	//	exportPitcher.Write(strexportData, strexportData.GetLength());
-	//	sprintf_s(exportData, "%i,%i,%i,%i,%c\n",
-	//		structPitcher.m_bWP,
-	//		structPitcher.m_bBalk,
-	//		structPitcher.m_PitcherField,
-	//		structPitcher.m_bER1,
-	//		Bunting[structPitcher.m_Bunting]);
-	//	strexportData = exportData;
-	//	exportPitcher.Write(strexportData, strexportData.GetLength());
-	//}
-	//exportPitcher.Close();
+		// When the last name is something like O'Tool, the "'" causes a problem
+		// with the SQL search. By editing the string to insert a double "'"
+		// in the search, the search works correctly.
+		lLastName = structPitcher.m_PitcherName.Left(structPitcher.m_PitcherName.Find(','));
+		std::string str1 = lLastName;
+		if (str1.find('\'', 0) != std::string::npos)
+		{
+			std::string str2 = str1.substr(0, str1.find('\'', 0));
+			// Insert the double "'" in the string.
+			str2 = str2 + '\'' + '\'';
+			strLastName = str2 + str1.substr((str1.find('\'', 0) + 1), std::string::npos);
+		}
+		else
+		{
+			strLastName = lLastName;
+		}
+
+		strPitcherFirstName = structPitcher.m_PitcherName.Right(
+			structPitcher.m_PitcherName.GetLength() - structPitcher.m_PitcherName.Find(", ") - 2).TrimRight(' ');
+
+		// Create search for duplicate record here.
+
+		// Update the filter which is the WHERE portion to find the player
+		// based on name and current team.
+		tmpTeamID.Format("%d", rsTeam.m_TeamID);
+		rsPitcher.m_strFilter = "[FirstName] = '" + strPitcherFirstName + "'" +
+			" AND [LastName] = '" + strLastName.c_str() + "'" +
+			" AND [TeamID] = " + tmpTeamID;
+		// Execute the query
+		rsPitcher.Requery();
+		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+		if (!rsPitcher.GetRowsFetched() == 1)
+		{
+			// Batter does not exist Therefore add this batter
+
+			rsPitcher.AddNew();
+
+			rsPitcher.m_FirstName = strPitcherFirstName;
+			rsPitcher.m_LastName = lLastName;
+			rsPitcher.m_OBChanceHomeRun = structPitcher.m_OBChanceHomeRun;
+			rsPitcher.m_OBChanceTriple = structPitcher.m_OBChanceTriple;
+			rsPitcher.m_OBChanceDouble = structPitcher.m_OBChanceDouble;
+			rsPitcher.m_OBChanceSingle = structPitcher.m_OBChanceSingle;
+			rsPitcher.m_OBChanceWalk = structPitcher.m_OBChanceWalk;
+			rsPitcher.m_ChanceDoublePlay = structPitcher.m_ChanceDoublePlay;
+			rsPitcher.m_OBChanceHomeRunRight = structPitcher.m_OBChanceHomeRunRight;
+			rsPitcher.m_OBChanceTripleRight = structPitcher.m_OBChanceTripleRight;
+			rsPitcher.m_OBChanceDoubleRight = structPitcher.m_OBChanceDoubleRight;
+			rsPitcher.m_OBChanceSingleRight = structPitcher.m_OBChanceSingleRight;
+			rsPitcher.m_OBChanceWalkRight = structPitcher.m_OBChanceWalkRight;
+			rsPitcher.m_ChanceDoublePlayRight = structPitcher.m_ChanceDoublePlayRight;
+			rsPitcher.m_OBChanceHomeRunLeft = structPitcher.m_OBChanceHomeRunLeft;
+			rsPitcher.m_OBChanceTripleLeft = structPitcher.m_OBChanceTripleLeft;
+			rsPitcher.m_OBChanceDoubleLeft = structPitcher.m_OBChanceDoubleLeft;
+			rsPitcher.m_OBChanceSingleLeft = structPitcher.m_OBChanceSingleLeft;
+			rsPitcher.m_OBChanceWalkLeft = structPitcher.m_OBChanceWalkLeft;
+			rsPitcher.m_ChanceDoublePlayLeft = structPitcher.m_ChanceDoublePlayLeft;
+			rsPitcher.m_OBChanceBasic = structPitcher.m_OBChanceBasic;
+			rsPitcher.m_OBChanceLeft = structPitcher.m_OBChanceLeft;
+			rsPitcher.m_OBChanceRight = structPitcher.m_OBChanceRight;
+			rsPitcher.m_Starter = structPitcher.m_Starter;
+			rsPitcher.m_Relief = structPitcher.m_Relief;
+			rsPitcher.m_Throws = structPitcher.m_Throws;
+			rsPitcher.m_Bunting = structPitcher.m_Bunting;
+			rsPitcher.m_Hold = structPitcher.m_Hold;
+			rsPitcher.m_WP = structPitcher.m_bWP;
+			rsPitcher.m_Balk = structPitcher.m_bBalk;
+			rsPitcher.m_PitcherField = structPitcher.m_PitcherField;
+			rsPitcher.m_ER1 = structPitcher.m_bER1;
+			rsPitcher.m_TeamID = rsTeam.m_TeamID;
+
+			GetLocalTime(&lt);
+			rsPitcher.m_LastUpdateTime = lt;
+
+			rsPitcher.Update();
+
+			// Retrieve the ID of the pitcher that was just inserted.
+
+			// Update the filter which is the WHERE portion to find the player
+			// based on name and current team.
+			tmpTeamID.Format("%d", rsTeam.m_TeamID);
+			rsPitcher.m_strFilter = "[FirstName] = '" + strPitcherFirstName + "'" +
+				" AND [LastName] = '" + strLastName.c_str() + "'" +
+				" AND [TeamID] = " + tmpTeamID;
+			// Execute the query
+			rsPitcher.Requery();
+			// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+			if (!rsPitcher.GetRowsFetched() == 1)
+			{
+				// Batter does not exist so there is a problem
+				AfxMessageBox("Database Requery of pitcher incorrect RS error: ");
+			}
+
+			// Create test to check for duplicate records here
+
+			rsPitcherStats.AddNew();
+
+			rsPitcherStats.m_Wins = structPitcher.m_Wins;
+			rsPitcherStats.m_Loss = structPitcher.m_Loss;
+			rsPitcherStats.m_Saves = structPitcher.m_Saves;
+			rsPitcherStats.m_InningsPitched = structPitcher.m_IP;
+			rsPitcherStats.m_ER = structPitcher.m_ER;
+			rsPitcherStats.m_Hits = structPitcher.m_Hits;
+			rsPitcherStats.m_Walks = structPitcher.m_Walks;
+			rsPitcherStats.m_Strikeouts = structPitcher.m_Strikeouts;
+			rsPitcherStats.m_HomeRuns = structPitcher.m_HomeRuns;
+			rsPitcherStats.m_Games = structPitcher.m_Games;
+			rsPitcherStats.m_CompleteGames = structPitcher.m_CompGames;
+			rsPitcherStats.m_Starts = structPitcher.m_Starts;
+			// PitcherID always points back to initial Batter for fixed statistics
+			rsPitcherStats.m_PitcherID = rsPitcher.m_PitcherID;
+			// TeamID can point to any team as this connects the statistics
+			// that change based on actual play.
+			rsPitcherStats.m_TeamID = rsTeam.m_TeamID;
+
+			GetLocalTime(&lt);
+			rsPitcherStats.m_LastUpdateTime = lt;
+
+			rsPitcherStats.Update();
+		}
+
+	}
+
+	rsPitcher.Close();
+	rsPitcherStats.Close();
+	rsTeam.Close();
 }
