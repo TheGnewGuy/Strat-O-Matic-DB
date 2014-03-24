@@ -54,14 +54,14 @@ void CPitcherStats::DoFieldExchange(CFieldExchange* pFX)
 // type of the member variable, not the type of the field in the database.
 // ODBC will try to automatically convert the column value to the requested type
 	RFX_Long(pFX, _T("[PitcherStatsID]"), m_PitcherStatsID);
-	RFX_Byte(pFX, _T("[Wins]"), m_Wins);
+	RFX_Int(pFX, _T("[Wins]"), m_Wins);
 	RFX_Int(pFX, _T("[Loss]"), m_Loss);
 	RFX_Int(pFX, _T("[Saves]"), m_Saves);
 	RFX_Text(pFX, _T("[InningsPitched]"), m_InningsPitched);
-	RFX_Byte(pFX, _T("[ER]"), m_ER);
-	RFX_Byte(pFX, _T("[Hits]"), m_Hits);
-	RFX_Byte(pFX, _T("[Walks]"), m_Walks);
-	RFX_Byte(pFX, _T("[Strikeouts]"), m_Strikeouts);
+	RFX_Int(pFX, _T("[ER]"), m_ER);
+	RFX_Int(pFX, _T("[Hits]"), m_Hits);
+	RFX_Int(pFX, _T("[Walks]"), m_Walks);
+	RFX_Int(pFX, _T("[Strikeouts]"), m_Strikeouts);
 	RFX_Int(pFX, _T("[HomeRuns]"), m_HomeRuns);
 	RFX_Int(pFX, _T("[Games]"), m_Games);
 	RFX_Int(pFX, _T("[CompleteGames]"), m_CompleteGames);

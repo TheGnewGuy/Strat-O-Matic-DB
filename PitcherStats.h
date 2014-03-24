@@ -21,14 +21,14 @@ public:
 // to support both Unicode and these conversions).
 
 	long	m_PitcherStatsID;	//Pitcher Stats Key
-	BYTE	m_Wins;
+	int		m_Wins;
 	int		m_Loss;
 	int		m_Saves;
 	CString	m_InningsPitched;
-	BYTE	m_ER;
-	BYTE	m_Hits;
-	BYTE	m_Walks;
-	BYTE	m_Strikeouts;
+	int		m_ER;
+	int		m_Hits;
+	int		m_Walks;
+	int		m_Strikeouts;
 	int		m_HomeRuns;
 	int		m_Games;
 	int		m_CompleteGames;

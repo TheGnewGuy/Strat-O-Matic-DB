@@ -710,12 +710,10 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 		else
 		{
 			// Batter already exists.
-			//AfxMessageBox("Database Batter is already in DB: " + strBatterFirstName);
+			//AfxMessageBox("Database Batter is already in DB: " + strBatterFirstName + " " + strLastName.c_str());
 		}
-
 	}
 	rsBatterStats.Close();
-
 	rsBatter.Close();
 
 	// Process Pitcher file
@@ -878,7 +876,11 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 
 			rsPitcherStats.Update();
 		}
-
+		else
+		{
+			// Pitcher already exists.
+			//AfxMessageBox("Database Pitcher is already in DB: " + strPitcherFirstName + " " + strLastName.c_str());
+		}
 	}
 
 	rsPitcher.Close();
