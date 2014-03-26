@@ -5,7 +5,6 @@
 
 #pragma once
 #include "Strat-O-Matic-DBSet.h"
-#include "Batter_MULTI_SET.h"
 #include "afxdb.h"
 #include "Batter.h"
 
@@ -54,7 +53,6 @@ public:
 	afx_msg void OnDbSelect();
 	afx_msg void OnDbAdd();
 	afx_msg void OnDbConvert();
-	CBatter_MULTI_SET m_Batter_MULTI_set;
 	CBatter* m_pBatter_set;
 	CDatabase m_pDatabase;
 	void ExportFileToDB(CString strDir, CString strTeamName);

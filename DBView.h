@@ -1,6 +1,6 @@
 #pragma once
 
-class CBatter_MULTI_SET;		// Declare the class name
+class CBatter;		// Declare the class name
 class CStratOMaticDBDoc;	// Declare the class name
 class CStratOMaticDBSet;
 
@@ -14,13 +14,13 @@ protected:
 	virtual void OnInitialUpdate();
 public:
 	enum { IDD = IDD_CBATTER_MULTI };
-	CBatter_MULTI_SET* m_pSet;
+	CBatter* m_pSet;
 	// Inline function definition
 	CStratOMaticDBDoc* GetDocument() const
 	{
 		return reinterpret_cast<CStratOMaticDBDoc*>(m_pDocument);
 	}
-	CBatter_MULTI_SET* GetRecordset();
+	CBatter* GetRecordset();
 	virtual CRecordset* OnGetRecordset();
 	CDBView(); // constructor now public
 #ifdef _DEBUG

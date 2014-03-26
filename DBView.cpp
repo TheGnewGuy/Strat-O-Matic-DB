@@ -9,7 +9,6 @@
 #include "Strat-O-Matic-DBSet.h"
 #include "Strat-O-Matic-DBDoc.h"
 #include "Strat-O-Matic-DBView.h"
-#include "Batter_MULTI_SET.h"
 #include "DBView.h"
 
 IMPLEMENT_DYNCREATE(CDBView, CRecordView)
@@ -35,10 +34,10 @@ void CDBView::DoDataExchange(CDataExchange* pDX)
 {
 	CRecordView::DoDataExchange(pDX);
 	DDX_FieldText(pDX, IDC_EDIT_FirstName,
-		m_pSet->m_BatterFirstName, m_pSet);
+		m_pSet->m_FirstName, m_pSet);
 }
 
-CBatter_MULTI_SET* CDBView::GetRecordset()
+CBatter* CDBView::GetRecordset()
 {
 	ASSERT(m_pSet != NULL);
 	return m_pSet;
@@ -53,11 +52,11 @@ void CDBView::OnInitialUpdate()
 {
 	BeginWaitCursor();
 	CStratOMaticDBDoc* pDoc = static_cast<CStratOMaticDBDoc*>(GetDocument());
-	m_pSet = &pDoc->m_Batter_MULTI_set; // Get a pointer to the recordset
+	m_pSet = pDoc->m_pBatter_set; // Get a pointer to the recordset
 	// Use the DB that is open for products recordset
-	m_pSet->m_pDatabase = pDoc->m_Batter_MULTI_set.m_pDatabase;
+	m_pSet->m_pDatabase = &pDoc->m_pDatabase;
 	// Set the current product ID as parameter
-	m_pSet->m_BatterFirstName = pDoc->m_Batter_MULTI_set.m_BatterFirstName;
+	m_pSet->m_FirstName = pDoc->m_pBatter_set->m_FirstName;
 	// Set the filter as product ID field
 	//m_pSet->m_strFilter =
 	//	“[ProductID] = ? AND[Orders].[OrderID] = [Order Details].[OrderID]”;

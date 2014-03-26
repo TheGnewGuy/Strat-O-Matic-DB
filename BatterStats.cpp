@@ -4,7 +4,7 @@
 
 // CBatterStats implementation
 
-// code generated on Sunday, March 09, 2014, 4:41 PM
+// code generated on Wednesday, March 26, 2014, 4:37 PM
 
 #include "stdafx.h"
 #include "BatterStats.h"
@@ -29,10 +29,13 @@ CBatterStats::CBatterStats(CDatabase* pdb)
 	m_CS = 0;
 	m_Games = 0;
 	m_HBP = 0;
+	m_AVG = 0.0;
+	m_SLG = 0.0;
+	m_OBP = 0.0;
 	m_BatterID = 0;
 	m_TeamID = 0;
 	m_LastUpdateTime;
-	m_nFields = 19;
+	m_nFields = 22;
 	m_nDefaultType = dynaset;
 }
 //#error Security Issue: The connection string may contain a password
@@ -72,6 +75,9 @@ void CBatterStats::DoFieldExchange(CFieldExchange* pFX)
 	RFX_Int(pFX, _T("[CS]"), m_CS);
 	RFX_Int(pFX, _T("[Games]"), m_Games);
 	RFX_Int(pFX, _T("[HBP]"), m_HBP);
+	RFX_Single(pFX, _T("[AVG]"), m_AVG);
+	RFX_Single(pFX, _T("[SLG]"), m_SLG);
+	RFX_Single(pFX, _T("[OBP]"), m_OBP);
 	RFX_Long(pFX, _T("[BatterID]"), m_BatterID);
 	RFX_Long(pFX, _T("[TeamID]"), m_TeamID);
 	RFX_Date(pFX, _T("[LastUpdateTime]"), m_LastUpdateTime);

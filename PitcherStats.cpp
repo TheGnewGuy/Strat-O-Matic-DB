@@ -4,7 +4,7 @@
 
 // CPitcherStats implementation
 
-// code generated on Sunday, March 09, 2014, 4:43 PM
+// code generated on Wednesday, March 26, 2014, 5:27 PM
 
 #include "stdafx.h"
 #include "PitcherStats.h"
@@ -17,7 +17,7 @@ CPitcherStats::CPitcherStats(CDatabase* pdb)
 	m_Wins = 0;
 	m_Loss = 0;
 	m_Saves = 0;
-	m_InningsPitched = L"";
+	m_InningsPitched = 0.0;
 	m_ER = 0;
 	m_Hits = 0;
 	m_Walks = 0;
@@ -26,10 +26,12 @@ CPitcherStats::CPitcherStats(CDatabase* pdb)
 	m_Games = 0;
 	m_CompleteGames = 0;
 	m_Starts = 0;
+	m_ERA = 0.0;
+	m_WHIP = 0.0;
 	m_PitcherID = 0;
 	m_TeamID = 0;
 	m_LastUpdateTime;
-	m_nFields = 16;
+	m_nFields = 18;
 	m_nDefaultType = dynaset;
 }
 //#error Security Issue: The connection string may contain a password
@@ -57,7 +59,7 @@ void CPitcherStats::DoFieldExchange(CFieldExchange* pFX)
 	RFX_Int(pFX, _T("[Wins]"), m_Wins);
 	RFX_Int(pFX, _T("[Loss]"), m_Loss);
 	RFX_Int(pFX, _T("[Saves]"), m_Saves);
-	RFX_Text(pFX, _T("[InningsPitched]"), m_InningsPitched);
+	RFX_Single(pFX, _T("[InningsPitched]"), m_InningsPitched);
 	RFX_Int(pFX, _T("[ER]"), m_ER);
 	RFX_Int(pFX, _T("[Hits]"), m_Hits);
 	RFX_Int(pFX, _T("[Walks]"), m_Walks);
@@ -66,6 +68,8 @@ void CPitcherStats::DoFieldExchange(CFieldExchange* pFX)
 	RFX_Int(pFX, _T("[Games]"), m_Games);
 	RFX_Int(pFX, _T("[CompleteGames]"), m_CompleteGames);
 	RFX_Int(pFX, _T("[Starts]"), m_Starts);
+	RFX_Single(pFX, _T("[ERA]"), m_ERA);
+	RFX_Single(pFX, _T("[WHIP]"), m_WHIP);
 	RFX_Long(pFX, _T("[PitcherID]"), m_PitcherID);
 	RFX_Long(pFX, _T("[TeamID]"), m_TeamID);
 	RFX_Date(pFX, _T("[LastUpdateTime]"), m_LastUpdateTime);

@@ -19,7 +19,6 @@
 #include "Conferences.h"
 #include "Divisions.h"
 #include "Strat-O-Matic-DBDoc.h"
-#include "Batter_MULTI_SET.h"
 #include "Batter.h"
 #include "FileStruct.h"
 #include <string>
@@ -954,6 +953,18 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 			rsBatterStats.m_CS = structBatter.m_CS;
 			rsBatterStats.m_Games = structBatter.m_Games;
 			rsBatterStats.m_HBP = structBatter.m_HBP;
+			if (structBatter.m_AB == 0)
+			{
+				rsBatterStats.m_AVG = 0.0f;
+				rsBatterStats.m_SLG = 0.0f;
+				rsBatterStats.m_OBP = 0.0f;
+			}
+			else
+			{
+				rsBatterStats.m_AVG = (float)structBatter.m_Hits / structBatter.m_AB;
+				rsBatterStats.m_SLG = (float)((structBatter.m_Hits - (structBatter.m_2B + structBatter.m_3B + structBatter.m_HomeRuns)) + (2 * structBatter.m_2B) + (3 * structBatter.m_3B) + (4 * structBatter.m_HomeRuns)) / (structBatter.m_AB);
+				rsBatterStats.m_OBP = (float)(structBatter.m_Hits + structBatter.m_Walk + structBatter.m_ReachedOnError + structBatter.m_Sacrifice + structBatter.m_StolenBase) / (structBatter.m_AB + structBatter.m_Walk + structBatter.m_ReachedOnError + structBatter.m_Sacrifice + structBatter.m_StolenBase);
+			}
 			// BatterID always points back to initial Batter for fixed statistics
 			rsBatterStats.m_BatterID = rsBatter.m_BatterID ;
 			// TeamID can point to any team as this connects the statistics
@@ -1112,7 +1123,7 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 			rsPitcherStats.m_Wins = structPitcher.m_Wins;
 			rsPitcherStats.m_Loss = structPitcher.m_Loss;
 			rsPitcherStats.m_Saves = structPitcher.m_Saves;
-			rsPitcherStats.m_InningsPitched = structPitcher.m_IP;
+			rsPitcherStats.m_InningsPitched = (float)atof(structPitcher.m_IP);
 			rsPitcherStats.m_ER = structPitcher.m_ER;
 			rsPitcherStats.m_Hits = structPitcher.m_Hits;
 			rsPitcherStats.m_Walks = structPitcher.m_Walks;
@@ -1121,6 +1132,17 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 			rsPitcherStats.m_Games = structPitcher.m_Games;
 			rsPitcherStats.m_CompleteGames = structPitcher.m_CompGames;
 			rsPitcherStats.m_Starts = structPitcher.m_Starts;
+			if (atof(structPitcher.m_IP) == 0)
+			{
+				rsPitcherStats.m_ERA = 0.0f;
+				rsPitcherStats.m_WHIP = 0.0f;
+			}
+			else
+			{
+				rsPitcherStats.m_ERA = (float)(structPitcher.m_ER * 9) / (float)atof(structPitcher.m_IP);
+				rsPitcherStats.m_WHIP = (float)((structPitcher.m_Hits + structPitcher.m_Walks) * 9) / (float)atof(structPitcher.m_IP);
+			}
+
 			// PitcherID always points back to initial Batter for fixed statistics
 			rsPitcherStats.m_PitcherID = rsPitcher.m_PitcherID;
 			// TeamID can point to any team as this connects the statistics

@@ -2,7 +2,7 @@
 
 #pragma once
 
-// code generated on Sunday, March 09, 2014, 4:43 PM
+// code generated on Wednesday, March 26, 2014, 5:27 PM
 
 class CPitcherStats : public CRecordset
 {
@@ -24,7 +24,7 @@ public:
 	int		m_Wins;
 	int		m_Loss;
 	int		m_Saves;
-	CString	m_InningsPitched;
+	float	m_InningsPitched;
 	int		m_ER;
 	int		m_Hits;
 	int		m_Walks;
@@ -33,8 +33,10 @@ public:
 	int		m_Games;
 	int		m_CompleteGames;
 	int		m_Starts;
+	float	m_ERA;			//(9*ER)/IP
+	float	m_WHIP;			//(Hits+BB)/IP
 	long	m_PitcherID;	//Pointer to PitcherID Key
-	long	m_TeamID;	//Pointer to TeamID Key
+	long	m_TeamID;		//Pointer to TeamID Key
 	COleDateTime	m_LastUpdateTime;
 
 // Overrides

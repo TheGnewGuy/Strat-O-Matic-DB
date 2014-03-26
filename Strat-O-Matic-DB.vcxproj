@@ -105,7 +105,6 @@
   <ItemGroup>
     <ClInclude Include="Batter.h" />
     <ClInclude Include="BatterStats.h" />
-    <ClInclude Include="Batter_MULTI_SET.h" />
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="Conferences.h" />
     <ClInclude Include="DBView.h" />
@@ -131,7 +130,6 @@
   <ItemGroup>
     <ClCompile Include="Batter.cpp" />
     <ClCompile Include="BatterStats.cpp" />
-    <ClCompile Include="Batter_MULTI_SET.cpp" />
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="Conferences.cpp" />
     <ClCompile Include="DBView.cpp" />

@@ -2,7 +2,7 @@
 
 #pragma once
 
-// code generated on Sunday, March 09, 2014, 4:41 PM
+// code generated on Wednesday, March 26, 2014, 4:37 PM
 
 class CBatterStats : public CRecordset
 {
@@ -21,21 +21,24 @@ public:
 // to support both Unicode and these conversions).
 
 	long	m_BatterStatsID;	//Batter Stats Key
-	int	m_AB;
-	int	m_Runs;
-	int	m_Hits;
-	int	m_RBI;
-	int	m_2B;
-	int	m_3B;
-	int	m_HomeRuns;
-	int	m_Walk;
-	int	m_StrikeOut;
-	int	m_ReachedOnError;
-	int	m_Sacrifice;
-	int	m_StolenBase;
-	int	m_CS;
-	int	m_Games;
-	int	m_HBP;
+	int		m_AB;
+	int		m_Runs;
+	int		m_Hits;
+	int		m_RBI;
+	int		m_2B;
+	int		m_3B;
+	int		m_HomeRuns;
+	int		m_Walk;
+	int		m_StrikeOut;
+	int		m_ReachedOnError;
+	int		m_Sacrifice;
+	int		m_StolenBase;
+	int		m_CS;
+	int		m_Games;
+	int		m_HBP;
+	float	m_AVG;		//Hits/AB
+	float	m_SLG;		//(1B+2*2B+3*3B+4*HR)/AB
+	float	m_OBP;		//(H+BB+HBP)/(AB+BB+HBP+SF)
 	long	m_BatterID;	//Pointer to BatterID Key
 	long	m_TeamID;	//Pointer to TeamID Key
 	COleDateTime	m_LastUpdateTime;

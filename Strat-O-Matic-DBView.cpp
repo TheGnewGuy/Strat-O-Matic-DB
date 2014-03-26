@@ -12,7 +12,6 @@
 //#include "Strat-O-Matic-DBSet.h"
 #include "Strat-O-Matic-DBDoc.h"
 #include "Strat-O-Matic-DBView.h"
-#include "Batter_MULTI_SET.h"
 #include "Batter.h"
 //#include "DBView.h"
 
