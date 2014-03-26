@@ -15,6 +15,9 @@
 #include "Pitcher.h"
 #include "PitcherStats.h"
 #include "Teams.h"
+#include "Leagues.h"
+#include "Conferences.h"
+#include "Divisions.h"
 #include "Strat-O-Matic-DBDoc.h"
 #include "Batter_MULTI_SET.h"
 #include "Batter.h"
@@ -363,6 +366,8 @@ void CStratOMaticDBDoc::OnDbConvert()
 
 	hCursorWait = AfxGetApp()->LoadStandardCursor(IDC_WAIT);
 
+	CreateDefaultLeague();
+
 	arrayFileNames.RemoveAll();
 	bWorking = myFileFind.FindFile(strLeagueDir + "\\TB*.dat", 0);
 	if (bWorking)
@@ -428,6 +433,7 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	PitcherStruct structPitcher;
 	CString tmpTeamID;
 	CString myTeam;
+	CString strDivision;
 	//CString strTempTeam;
 	CString myShortTeam;
 	CString myBallpark;
@@ -470,6 +476,48 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	strTemp = "XB" + strTeamName.Left(20);
 	exportFileName = strDir + "\\" + strTemp + ".txt"; // dir\XB000001.txt
 	myFileName = strDir + "\\TB" + strTeamName.Right(10);
+
+	// Allocate the League recordset
+	CLeagues rsLeague(&m_pDatabase);
+	TRY
+	{
+		// Execute the query
+		rsLeague.Open(CRecordset::snapshot, NULL, CRecordset::none);
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database League RS error: " + e->m_strError);
+	}
+	END_CATCH;
+
+	// Allocate the Conference recordset
+	CConferences rsConference(&m_pDatabase);
+	TRY
+	{
+		// Execute the query
+		rsConference.Open(CRecordset::snapshot, NULL, CRecordset::none);
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database Conference RS error: " + e->m_strError);
+	}
+	END_CATCH;
+
+	// Allocate the Division recordset
+	CDivisions rsDivision(&m_pDatabase);
+	TRY
+	{
+		// Execute the query
+		rsDivision.Open(CRecordset::snapshot, NULL, CRecordset::none);
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database Division RS error: " + e->m_strError);
+	}
+	END_CATCH;
 
 	// Allocate the Teams recordset
 	CTeams rsTeam(&m_pDatabase);
@@ -529,6 +577,211 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	if (!rsTeam.GetRowsFetched())
 	{
 		// Team does not exist so add it
+		strDivision = "None";
+		if (myTeam == "Chicago White Sox" && myYear == "1965")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1965'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Cleveland Indians" && myYear == "1965")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1965'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Minnesota Twins" && myYear == "1965")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1965'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Cincinnati Reds" && myYear == "1965")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1965'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Los Angeles Dodgers" && myYear == "1965")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1965'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "San Francisco Giants" && myYear == "1965")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1965'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+
+		if (myTeam == "Baltimore Orioles" && myYear == "1969")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1969'";
+			rsDivision.m_strFilter = "[DivisionName] = 'BaseALEast1969'";
+			strDivision = "BaseALEast1969";
+		}
+		if (myTeam == "Seattle Pilots" && myYear == "1969")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1969'";
+			rsDivision.m_strFilter = "[DivisionName] = 'BaseALWest1969'";
+			strDivision = "BaseALWest1969";
+		}
+		if (myTeam == "Washington Senators" && myYear == "1969")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1969'";
+			rsDivision.m_strFilter = "[DivisionName] = 'BaseALEast1969'";
+			strDivision = "BaseALEast1969";
+		}
+		if (myTeam == "Houston Astros" && myYear == "1969")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1969'";
+			rsDivision.m_strFilter = "[DivisionName] = 'BaseNLWest1969'";
+			strDivision = "BaseNLWest1969";
+		}
+		if (myTeam == "Pittsburg Pirates" && myYear == "1969")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1969'";
+			rsDivision.m_strFilter = "[DivisionName] = 'BaseNLEast1969'";
+			strDivision = "BaseNLEast1969";
+		}
+		if (myTeam == "San Diego Padres" && myYear == "1969")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1969'";
+			rsDivision.m_strFilter = "[DivisionName] = 'BaseNLWest1969'";
+			strDivision = "BaseNLWest1969";
+		}
+
+		if (myTeam == "Cleveland" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1997'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1997'";
+			rsDivision.m_strFilter = "[DivisionName] = 'BaseALCentral1997'";
+			strDivision = "BaseALCentral1997";
+		}
+		if (myTeam == "Florida" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1997'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1997'";
+			rsDivision.m_strFilter = "[DivisionName] = 'BaseNLEast1997'";
+			strDivision = "BaseNLEast1997";
+		}
+		if (myTeam == "Anaheim" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1997'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1997'";
+			rsDivision.m_strFilter = "[DivisionName] = 'BaseALWest1997'";
+			strDivision = "BaseALWest1997";
+		}
+		if (myTeam == "Baltimore" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base1997'";
+			rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1997'";
+			rsDivision.m_strFilter = "[DivisionName] = 'BaseALEast1997'";
+			strDivision = "BaseALEast1997";
+		}
+
+		if (myTeam == "Baltland" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Bostago" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Cleonto" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Seaota" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Texaheim" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Yorkcity" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Cinangeles" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Florago" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Montrado" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "NewDiego" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "Philanta" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+		if (myTeam == "SanLouis" && myYear == "1997")
+		{
+			rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+			rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
+			rsDivision.m_strFilter = "[DivisionName] = 'None'";
+			strDivision = "None";
+		}
+
+		rsLeague.Requery();
+		rsConference.Requery();
+		rsDivision.Requery();
+
 		rsTeam.AddNew();
 
 		rsTeam.m_TeamName = myTeam;
@@ -538,7 +791,12 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 		rsTeam.m_HomeLosses = 0;
 		rsTeam.m_AwayWins = 0;
 		rsTeam.m_AwayLosses = 0;
-		rsTeam.m_LeagueID = 0;
+		rsTeam.m_LeagueID = rsLeague.m_LeagueID;
+		rsTeam.m_ConferenceID = rsConference.m_ConferenceID;
+		if (strDivision == "None")
+			rsTeam.m_DivisionID = 0;
+		else
+			rsTeam.m_DivisionID = rsDivision.m_DivisionID;
 		rsTeam.m_TeamYear = myYear;
 
 		GetLocalTime(&lt);
@@ -849,8 +1107,6 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 				AfxMessageBox("Database Requery of pitcher incorrect RS error: ");
 			}
 
-			// Create test to check for duplicate records here
-
 			rsPitcherStats.AddNew();
 
 			rsPitcherStats.m_Wins = structPitcher.m_Wins;
@@ -886,4 +1142,296 @@ void CStratOMaticDBDoc::ExportFileToDB(CString strDir, CString strTeamName)
 	rsPitcher.Close();
 	rsPitcherStats.Close();
 	rsTeam.Close();
+	rsDivision.Close();
+	rsConference.Close();
+	rsLeague.Close();
+}
+
+
+bool CStratOMaticDBDoc::CreateDefaultLeague()
+{
+	SYSTEMTIME lt;
+
+	// Allocate the League recordset
+	CLeagues rsLeague(&m_pDatabase);
+	TRY
+	{
+		// Execute the query
+		rsLeague.Open(CRecordset::snapshot, NULL, CRecordset::none);
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database League RS error: " + e->m_strError);
+	}
+	END_CATCH;
+
+	// Allocate the Conference recordset
+	CConferences rsConference(&m_pDatabase);
+	TRY
+	{
+		// Execute the query
+		rsConference.Open(CRecordset::snapshot, NULL, CRecordset::none);
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database Conference RS error: " + e->m_strError);
+	}
+	END_CATCH;
+
+	// Allocate the Division recordset
+	CDivisions rsDivision(&m_pDatabase);
+	TRY
+	{
+		// Execute the query
+		rsDivision.Open(CRecordset::snapshot, NULL, CRecordset::none);
+	}
+		CATCH(CDBException, e)
+	{
+			// If a database exception occured, show error msg
+			AfxMessageBox("Database Division RS error: " + e->m_strError);
+	}
+	END_CATCH;
+
+	// Create search for duplicate record here.
+	// Update the filter which is the WHERE portion to find the League.
+	rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
+	// Execute the query
+	rsLeague.Requery();
+	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+	if (!rsLeague.GetRowsFetched() == 1)
+	{
+		rsLeague.AddNew();
+		rsLeague.m_LeagueName = "Base1965";
+		rsLeague.m_NumberOfConferences = 2;
+		rsLeague.m_NumberOfDivisions = 0;
+		GetLocalTime(&lt);
+		rsLeague.m_LastUpdateTime = lt;
+		rsLeague.Update();
+
+		// Execute the query to retrieve LeagueID
+		rsLeague.Requery();
+
+		rsConference.AddNew();
+		rsConference.m_ConferenceName = "BaseAL1965";
+		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		GetLocalTime(&lt);
+		rsConference.m_LastUpdateTime = lt;
+		rsConference.Update();
+
+		rsConference.AddNew();
+		rsConference.m_ConferenceName = "BaseNL1965";
+		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		GetLocalTime(&lt);
+		rsConference.m_LastUpdateTime = lt;
+		rsConference.Update();
+	}
+
+	// Update the filter which is the WHERE portion to find the League.
+	rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
+	// Execute the query
+	rsLeague.Requery();
+	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+	if (!rsLeague.GetRowsFetched() == 1)
+	{
+		rsLeague.AddNew();
+		rsLeague.m_LeagueName = "Base1969";
+		rsLeague.m_NumberOfConferences = 2;
+		rsLeague.m_NumberOfDivisions = 4;
+		GetLocalTime(&lt);
+		rsLeague.m_LastUpdateTime = lt;
+		rsLeague.Update();
+
+		// Execute the query to retrieve LeagueID
+		rsLeague.Requery();
+
+		rsConference.AddNew();
+		rsConference.m_ConferenceName = "BaseAL1969";
+		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		GetLocalTime(&lt);
+		rsConference.m_LastUpdateTime = lt;
+		rsConference.Update();
+
+		rsConference.AddNew();
+		rsConference.m_ConferenceName = "BaseNL1969";
+		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		GetLocalTime(&lt);
+		rsConference.m_LastUpdateTime = lt;
+		rsConference.Update();
+
+		// Update the filter which is the WHERE portion to find the League.
+		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1969'";
+		// Execute the query
+		rsConference.Requery();
+		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+		if (rsConference.GetRowsFetched() == 1)
+		{
+			rsDivision.AddNew();
+			rsDivision.m_DivisionName = "BaseALEast1969";
+			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			GetLocalTime(&lt);
+			rsDivision.m_LastUpdateTime = lt;
+			rsDivision.Update();
+
+			rsDivision.AddNew();
+			rsDivision.m_DivisionName = "BaseALWest1969";
+			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			GetLocalTime(&lt);
+			rsDivision.m_LastUpdateTime = lt;
+			rsDivision.Update();
+		}
+
+		// Update the filter which is the WHERE portion to find the League.
+		rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1969'";
+		// Execute the query
+		rsConference.Requery();
+		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+		if (rsConference.GetRowsFetched() == 1)
+		{
+			rsDivision.AddNew();
+			rsDivision.m_DivisionName = "BaseNLEast1969";
+			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			GetLocalTime(&lt);
+			rsDivision.m_LastUpdateTime = lt;
+			rsDivision.Update();
+
+			rsDivision.AddNew();
+			rsDivision.m_DivisionName = "BaseNLWest1969";
+			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			GetLocalTime(&lt);
+			rsDivision.m_LastUpdateTime = lt;
+			rsDivision.Update();
+		}
+	}
+
+	// Update the filter which is the WHERE portion to find the League.
+	rsLeague.m_strFilter = "[LeagueName] = 'Base1997'";
+	// Execute the query
+	rsLeague.Requery();
+	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+	if (!rsLeague.GetRowsFetched() == 1)
+	{
+		rsLeague.AddNew();
+		rsLeague.m_LeagueName = "Base1997";
+		rsLeague.m_NumberOfConferences = 2;
+		rsLeague.m_NumberOfDivisions = 6;
+		GetLocalTime(&lt);
+		rsLeague.m_LastUpdateTime = lt;
+		rsLeague.Update();
+
+		// Execute the query to retrieve LeagueID
+		rsLeague.Requery();
+
+		rsConference.AddNew();
+		rsConference.m_ConferenceName = "BaseAL1997";
+		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		GetLocalTime(&lt);
+		rsConference.m_LastUpdateTime = lt;
+		rsConference.Update();
+
+		rsConference.AddNew();
+		rsConference.m_ConferenceName = "BaseNL1997";
+		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		GetLocalTime(&lt);
+		rsConference.m_LastUpdateTime = lt;
+		rsConference.Update();
+
+		// Update the filter which is the WHERE portion to find the League.
+		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1997'";
+		// Execute the query
+		rsConference.Requery();
+		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+		if (rsConference.GetRowsFetched() == 1)
+		{
+			rsDivision.AddNew();
+			rsDivision.m_DivisionName = "BaseALEast1997";
+			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			GetLocalTime(&lt);
+			rsDivision.m_LastUpdateTime = lt;
+			rsDivision.Update();
+
+			rsDivision.AddNew();
+			rsDivision.m_DivisionName = "BaseALCentral1997";
+			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			GetLocalTime(&lt);
+			rsDivision.m_LastUpdateTime = lt;
+			rsDivision.Update();
+
+			rsDivision.AddNew();
+			rsDivision.m_DivisionName = "BaseALWest1997";
+			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			GetLocalTime(&lt);
+			rsDivision.m_LastUpdateTime = lt;
+			rsDivision.Update();
+		}
+
+
+		// Update the filter which is the WHERE portion to find the League.
+		rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1997'";
+		// Execute the query
+		rsConference.Requery();
+		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+		if (rsConference.GetRowsFetched() == 1)
+		{
+			rsDivision.AddNew();
+			rsDivision.m_DivisionName = "BaseNLEast1997";
+			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			GetLocalTime(&lt);
+			rsDivision.m_LastUpdateTime = lt;
+			rsDivision.Update();
+
+			rsDivision.AddNew();
+			rsDivision.m_DivisionName = "BaseNLCentral1997";
+			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			GetLocalTime(&lt);
+			rsDivision.m_LastUpdateTime = lt;
+			rsDivision.Update();
+
+			rsDivision.AddNew();
+			rsDivision.m_DivisionName = "BaseNLWest1997";
+			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			GetLocalTime(&lt);
+			rsDivision.m_LastUpdateTime = lt;
+			rsDivision.Update();
+		}
+	}
+
+	// Update the filter which is the WHERE portion to find the League.
+	rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+	// Execute the query
+	rsLeague.Requery();
+	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+	if (!rsLeague.GetRowsFetched() == 1)
+	{
+		rsLeague.AddNew();
+		rsLeague.m_LeagueName = "Base Plano 97 in 99";
+		rsLeague.m_NumberOfConferences = 2;
+		rsLeague.m_NumberOfDivisions = 0;
+		GetLocalTime(&lt);
+		rsLeague.m_LastUpdateTime = lt;
+		rsLeague.Update();
+
+		// Execute the query to retrieve LeagueID
+		rsLeague.Requery();
+
+		rsConference.AddNew();
+		rsConference.m_ConferenceName = "Base Division A";
+		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		GetLocalTime(&lt);
+		rsConference.m_LastUpdateTime = lt;
+		rsConference.Update();
+
+		rsConference.AddNew();
+		rsConference.m_ConferenceName = "Base Division B";
+		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		GetLocalTime(&lt);
+		rsConference.m_LastUpdateTime = lt;
+		rsConference.Update();
+	}
+
+	rsDivision.Close();
+	rsConference.Close();
+	rsLeague.Close();
+	return true;
 }

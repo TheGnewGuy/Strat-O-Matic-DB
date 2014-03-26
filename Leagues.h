@@ -21,9 +21,9 @@ public:
 // to support both Unicode and these conversions).
 
 	long	m_LeagueID;
-	CStringW	m_LeagueName;
-	int	m_NumberOfConferences;
-	int	m_NumberOfDivisions;
+	CString	m_LeagueName;
+	int		m_NumberOfConferences;
+	int		m_NumberOfDivisions;
 	COleDateTime	m_LastUpdateTime;
 
 // Overrides

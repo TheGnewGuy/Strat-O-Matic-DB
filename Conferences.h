@@ -21,7 +21,7 @@ public:
 // to support both Unicode and these conversions).
 
 	long	m_ConferenceID;
-	CStringW	m_ConferenceName;
+	CString	m_ConferenceName;
 	long	m_LeagueID;
 	COleDateTime	m_LastUpdateTime;
 

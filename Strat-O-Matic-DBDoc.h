@@ -58,4 +58,5 @@ public:
 	CBatter* m_pBatter_set;
 	CDatabase m_pDatabase;
 	void ExportFileToDB(CString strDir, CString strTeamName);
+	bool CreateDefaultLeague();
 };
