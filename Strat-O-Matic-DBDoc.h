@@ -55,6 +55,8 @@ public:
 	afx_msg void OnDbConvert();
 	CBatter* m_pBatter_set;
 	CDatabase m_pDatabase;
-	void ExportFileToDB(CString strDir, CString strTeamName);
+	void ExportBaseFileToDB(CString strDir, CString strTeamName);
 	bool CreateDefaultLeague();
+	// Export all of the teams in a given league
+	void ExportLeagueFileToDB(CString strDir, CString strTeamName);
 };
