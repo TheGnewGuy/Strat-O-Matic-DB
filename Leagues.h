@@ -2,7 +2,7 @@
 
 #pragma once
 
-// code generated on Monday, March 10, 2014, 1:33 PM
+// code generated on Wednesday, April 09, 2014, 5:17 PM
 
 class CLeagues : public CRecordset
 {
@@ -24,6 +24,7 @@ public:
 	CString	m_LeagueName;
 	int		m_NumberOfConferences;
 	int		m_NumberOfDivisions;
+	BOOL	m_BaseLeague;
 	COleDateTime	m_LastUpdateTime;
 
 // Overrides

@@ -75,7 +75,7 @@ CStratOMaticDBDoc::CStratOMaticDBDoc()
 			"FROM Batter";
 
 		// Execute the query
-		m_pBatter_set->Open(CRecordset::snapshot, SqlString, CRecordset::none);
+		m_pBatter_set->Open(CRecordset::dynaset, SqlString, CRecordset::none);
 	}
 	CATCH(CDBException, e)
 	{
@@ -243,7 +243,7 @@ void CStratOMaticDBDoc::OnDbSelect()
 				"FROM Batter";
 
 			// Execute the query
-			rs.Open(CRecordset::snapshot, SqlString, CRecordset::none);
+			rs.Open(CRecordset::dynaset, SqlString, CRecordset::none);
 
 			// Loop through all records and display popup.
 			while (!rs.IsEOF())
@@ -300,7 +300,7 @@ void CStratOMaticDBDoc::OnDbAdd()
 			GetLocalTime(&lt);
 
 			// Execute the query
-			rs.Open(CRecordset::snapshot, NULL, CRecordset::none);
+			rs.Open(CRecordset::dynaset, NULL, CRecordset::none);
 			rs.AddNew();
 			rs.m_FirstName = "Andy";
 			rs.m_LastName = "Gnew";
@@ -576,7 +576,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 	TRY
 	{
 		// Execute the query
-		rsLeague.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsLeague.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -590,7 +590,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 	TRY
 	{
 		// Execute the query
-		rsConference.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsConference.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -604,7 +604,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 	TRY
 	{
 		// Execute the query
-		rsDivision.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsDivision.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -618,7 +618,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 	TRY
 	{
 		// Execute the query
-		rsTeam.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsTeam.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -632,7 +632,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 	TRY
 	{
 		// Execute the query
-		rsBatter.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsBatter.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -646,7 +646,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 	TRY
 	{
 		// Execute the query
-		rsBatterStats.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsBatterStats.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -668,7 +668,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 	rsTeam.m_strFilter = "[TeamName] = '" + myTeam + "' AND [TeamYear] = '" + myYear + "'";
 	// Execute the query
 	rsTeam.Requery();
-	if (!rsTeam.GetRowsFetched())
+	if (!rsTeam.GetRecordCount())
 	{
 		// Team does not exist so add it
 		strDivision = "None";
@@ -892,6 +892,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 		else
 			rsTeam.m_DivisionID = rsDivision.m_DivisionID;
 		rsTeam.m_TeamYear = myYear;
+		rsTeam.m_BaseTeam = TRUE;
 
 		GetLocalTime(&lt);
 		rsTeam.m_LastUpdateTime = lt;
@@ -901,7 +902,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 
 	// Re-Execute the query
 	rsTeam.Requery();
-	if (!rsTeam.GetRowsFetched())
+	if (!rsTeam.GetRecordCount())
 	{
 		// Team does not exist so there is a problem
 		AfxMessageBox("Database Added Team Missing RS error: ");
@@ -947,7 +948,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 		// Execute the query
 		rsBatter.Requery();
 		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-		if (!rsBatter.GetRowsFetched() == 1)
+		if (!rsBatter.GetRecordCount() == 1)
 		{
 			// Batter does not exist Therefore add this batter
 
@@ -1023,7 +1024,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 			// Execute the query
 			rsBatter.Requery();
 			// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-			if (!rsBatter.GetRowsFetched() == 1)
+			if (!rsBatter.GetRecordCount() == 1)
 			{
 				// Batter does not exist so there is a problem
 				AfxMessageBox("Database Requery of batter incorrect RS error: ");
@@ -1090,7 +1091,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 	TRY
 	{
 		// Execute the query
-		rsPitcher.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsPitcher.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1104,7 +1105,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 	TRY
 	{
 		// Execute the query
-		rsPitcherStats.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsPitcherStats.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1151,7 +1152,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 		// Execute the query
 		rsPitcher.Requery();
 		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-		if (!rsPitcher.GetRowsFetched() == 1)
+		if (!rsPitcher.GetRecordCount() == 1)
 		{
 			// Batter does not exist Therefore add this batter
 
@@ -1207,7 +1208,7 @@ void CStratOMaticDBDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 			// Execute the query
 			rsPitcher.Requery();
 			// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-			if (!rsPitcher.GetRowsFetched() == 1)
+			if (!rsPitcher.GetRecordCount() == 1)
 			{
 				// Batter does not exist so there is a problem
 				AfxMessageBox("Database Requery of pitcher incorrect RS error: ");
@@ -1274,7 +1275,8 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 	TRY
 	{
 		// Execute the query
-		rsLeague.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		//rsLeague.Open(CRecordset::dynaset, NULL, CRecordset::none);
+		rsLeague.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1288,7 +1290,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 	TRY
 	{
 		// Execute the query
-		rsConference.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsConference.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1302,7 +1304,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 	TRY
 	{
 		// Execute the query
-		rsDivision.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsDivision.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1317,12 +1319,17 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 	// Execute the query
 	rsLeague.Requery();
 	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	if (!rsLeague.GetRowsFetched() == 1)
+	if (!rsLeague.CanUpdate())
+	{
+		AfxMessageBox("Unable to update the League recordset.");
+	}	
+	if (!rsLeague.GetRecordCount() == 1)
 	{
 		rsLeague.AddNew();
 		rsLeague.m_LeagueName = "Base1965";
 		rsLeague.m_NumberOfConferences = 2;
 		rsLeague.m_NumberOfDivisions = 0;
+		rsLeague.m_BaseLeague = TRUE;
 		GetLocalTime(&lt);
 		rsLeague.m_LastUpdateTime = lt;
 		rsLeague.Update();
@@ -1333,6 +1340,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "BaseAL1965";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = TRUE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1340,6 +1348,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "BaseNL1965";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = TRUE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1350,12 +1359,13 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 	// Execute the query
 	rsLeague.Requery();
 	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	if (!rsLeague.GetRowsFetched() == 1)
+	if (!rsLeague.GetRecordCount() == 1)
 	{
 		rsLeague.AddNew();
 		rsLeague.m_LeagueName = "Base1969";
 		rsLeague.m_NumberOfConferences = 2;
 		rsLeague.m_NumberOfDivisions = 4;
+		rsLeague.m_BaseLeague = TRUE;
 		GetLocalTime(&lt);
 		rsLeague.m_LastUpdateTime = lt;
 		rsLeague.Update();
@@ -1366,6 +1376,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "BaseAL1969";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = TRUE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1373,6 +1384,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "BaseNL1969";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = TRUE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1382,11 +1394,12 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		// Execute the query
 		rsConference.Requery();
 		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-		if (rsConference.GetRowsFetched() == 1)
+		if (rsConference.GetRecordCount() == 1)
 		{
 			rsDivision.AddNew();
 			rsDivision.m_DivisionName = "BaseALEast1969";
 			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			rsDivision.m_BaseDivision = TRUE;
 			GetLocalTime(&lt);
 			rsDivision.m_LastUpdateTime = lt;
 			rsDivision.Update();
@@ -1394,6 +1407,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 			rsDivision.AddNew();
 			rsDivision.m_DivisionName = "BaseALWest1969";
 			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			rsDivision.m_BaseDivision = TRUE;
 			GetLocalTime(&lt);
 			rsDivision.m_LastUpdateTime = lt;
 			rsDivision.Update();
@@ -1404,11 +1418,12 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		// Execute the query
 		rsConference.Requery();
 		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-		if (rsConference.GetRowsFetched() == 1)
+		if (rsConference.GetRecordCount() == 1)
 		{
 			rsDivision.AddNew();
 			rsDivision.m_DivisionName = "BaseNLEast1969";
 			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			rsDivision.m_BaseDivision = TRUE;
 			GetLocalTime(&lt);
 			rsDivision.m_LastUpdateTime = lt;
 			rsDivision.Update();
@@ -1416,6 +1431,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 			rsDivision.AddNew();
 			rsDivision.m_DivisionName = "BaseNLWest1969";
 			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			rsDivision.m_BaseDivision = TRUE;
 			GetLocalTime(&lt);
 			rsDivision.m_LastUpdateTime = lt;
 			rsDivision.Update();
@@ -1427,12 +1443,13 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 	// Execute the query
 	rsLeague.Requery();
 	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	if (!rsLeague.GetRowsFetched() == 1)
+	if (!rsLeague.GetRecordCount() == 1)
 	{
 		rsLeague.AddNew();
 		rsLeague.m_LeagueName = "Base1997";
 		rsLeague.m_NumberOfConferences = 2;
 		rsLeague.m_NumberOfDivisions = 6;
+		rsLeague.m_BaseLeague = TRUE;
 		GetLocalTime(&lt);
 		rsLeague.m_LastUpdateTime = lt;
 		rsLeague.Update();
@@ -1443,6 +1460,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "BaseAL1997";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = TRUE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1450,6 +1468,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "BaseNL1997";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = TRUE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1459,11 +1478,12 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		// Execute the query
 		rsConference.Requery();
 		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-		if (rsConference.GetRowsFetched() == 1)
+		if (rsConference.GetRecordCount() == 1)
 		{
 			rsDivision.AddNew();
 			rsDivision.m_DivisionName = "BaseALEast1997";
 			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			rsDivision.m_BaseDivision = TRUE;
 			GetLocalTime(&lt);
 			rsDivision.m_LastUpdateTime = lt;
 			rsDivision.Update();
@@ -1471,6 +1491,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 			rsDivision.AddNew();
 			rsDivision.m_DivisionName = "BaseALCentral1997";
 			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			rsDivision.m_BaseDivision = TRUE;
 			GetLocalTime(&lt);
 			rsDivision.m_LastUpdateTime = lt;
 			rsDivision.Update();
@@ -1478,6 +1499,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 			rsDivision.AddNew();
 			rsDivision.m_DivisionName = "BaseALWest1997";
 			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			rsDivision.m_BaseDivision = TRUE;
 			GetLocalTime(&lt);
 			rsDivision.m_LastUpdateTime = lt;
 			rsDivision.Update();
@@ -1489,11 +1511,12 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		// Execute the query
 		rsConference.Requery();
 		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-		if (rsConference.GetRowsFetched() == 1)
+		if (rsConference.GetRecordCount() == 1)
 		{
 			rsDivision.AddNew();
 			rsDivision.m_DivisionName = "BaseNLEast1997";
 			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			rsDivision.m_BaseDivision = TRUE;
 			GetLocalTime(&lt);
 			rsDivision.m_LastUpdateTime = lt;
 			rsDivision.Update();
@@ -1501,6 +1524,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 			rsDivision.AddNew();
 			rsDivision.m_DivisionName = "BaseNLCentral1997";
 			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			rsDivision.m_BaseDivision = TRUE;
 			GetLocalTime(&lt);
 			rsDivision.m_LastUpdateTime = lt;
 			rsDivision.Update();
@@ -1508,6 +1532,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 			rsDivision.AddNew();
 			rsDivision.m_DivisionName = "BaseNLWest1997";
 			rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
+			rsDivision.m_BaseDivision = TRUE;
 			GetLocalTime(&lt);
 			rsDivision.m_LastUpdateTime = lt;
 			rsDivision.Update();
@@ -1519,12 +1544,13 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 	// Execute the query
 	rsLeague.Requery();
 	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	if (!rsLeague.GetRowsFetched() == 1)
+	if (!rsLeague.GetRecordCount() == 1)
 	{
 		rsLeague.AddNew();
 		rsLeague.m_LeagueName = "Base Plano 97 in 99";
 		rsLeague.m_NumberOfConferences = 2;
 		rsLeague.m_NumberOfDivisions = 0;
+		rsLeague.m_BaseLeague = TRUE;
 		GetLocalTime(&lt);
 		rsLeague.m_LastUpdateTime = lt;
 		rsLeague.Update();
@@ -1535,6 +1561,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "Base Division A";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = TRUE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1542,6 +1569,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "Base Division B";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = TRUE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1552,12 +1580,13 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 	// Execute the query
 	rsLeague.Requery();
 	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	if (!rsLeague.GetRowsFetched() == 1)
+	if (!rsLeague.GetRecordCount() == 1)
 	{
 		rsLeague.AddNew();
 		rsLeague.m_LeagueName = "Plano 97 in 99";
 		rsLeague.m_NumberOfConferences = 2;
 		rsLeague.m_NumberOfDivisions = 0;
+		rsLeague.m_BaseLeague = FALSE;
 		GetLocalTime(&lt);
 		rsLeague.m_LastUpdateTime = lt;
 		rsLeague.Update();
@@ -1568,6 +1597,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "Division A";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = FALSE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1575,6 +1605,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "Division B";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = FALSE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1585,12 +1616,13 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 	// Execute the query
 	rsLeague.Requery();
 	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	if (!rsLeague.GetRowsFetched() == 1)
+	if (!rsLeague.GetRecordCount() == 1)
 	{
 		rsLeague.AddNew();
 		rsLeague.m_LeagueName = "The Gnews 1998";
 		rsLeague.m_NumberOfConferences = 2;
 		rsLeague.m_NumberOfDivisions = 0;
+		rsLeague.m_BaseLeague = FALSE;
 		GetLocalTime(&lt);
 		rsLeague.m_LastUpdateTime = lt;
 		rsLeague.Update();
@@ -1601,6 +1633,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "65 Conference";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = FALSE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1608,6 +1641,7 @@ bool CStratOMaticDBDoc::CreateDefaultLeague()
 		rsConference.AddNew();
 		rsConference.m_ConferenceName = "69 Conference";
 		rsConference.m_LeagueID = rsLeague.m_LeagueID;
+		rsConference.m_BaseConference = FALSE;
 		GetLocalTime(&lt);
 		rsConference.m_LastUpdateTime = lt;
 		rsConference.Update();
@@ -1678,7 +1712,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	TRY
 	{
 		// Execute the query
-		rsLeague.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsLeague.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1692,7 +1726,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	TRY
 	{
 		// Execute the query
-		rsLeagueBase.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsLeagueBase.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1706,7 +1740,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	TRY
 	{
 		// Execute the query
-		rsConference.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsConference.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1720,7 +1754,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	TRY
 	{
 		// Execute the query
-		rsDivision.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsDivision.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1734,7 +1768,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	TRY
 	{
 		// Execute the query
-		rsTeam.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsTeam.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1748,7 +1782,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	TRY
 	{
 		// Execute the query
-		rsTeamBase.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsTeamBase.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1762,7 +1796,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	TRY
 	{
 		// Execute the query
-		rsBatter.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsBatter.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1776,7 +1810,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	TRY
 	{
 		// Execute the query
-		rsBatterStats.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsBatterStats.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -1977,7 +2011,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	// Execute the query
 	rsTeam.Requery();
 
-	if (!rsTeam.GetRowsFetched())
+	if (!rsTeam.GetRecordCount())
 	{
 		// Need to add the team as this team entry is tied to the player statistics.
 		rsTeam.AddNew();
@@ -2033,7 +2067,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	tmpTeamIDBase.Format("%d", rsTeamBase.m_TeamID);
 
 	rsTeam.Requery();
-	if (!rsTeam.GetRowsFetched())
+	if (!rsTeam.GetRecordCount())
 	{
 		// Team does not exist so there is a problem
 		AfxMessageBox("Database Added Team Missing RS error: ");
@@ -2082,7 +2116,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 		// Execute the query
 		rsBatter.Requery();
 		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-		if (rsBatter.GetRowsFetched() == 1)
+		if (rsBatter.GetRecordCount() == 1)
 		{
 			// Batter exists Therefore add statistics to this batter
 
@@ -2145,7 +2179,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	TRY
 	{
 		// Execute the query
-		rsPitcher.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsPitcher.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -2159,7 +2193,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 	TRY
 	{
 		// Execute the query
-		rsPitcherStats.Open(CRecordset::snapshot, NULL, CRecordset::none);
+		rsPitcherStats.Open(CRecordset::dynaset, NULL, CRecordset::none);
 	}
 		CATCH(CDBException, e)
 	{
@@ -2206,7 +2240,7 @@ void CStratOMaticDBDoc::ExportLeagueFileToDB(CString strDir, CString strTeamName
 		// Execute the query
 		rsPitcher.Requery();
 		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-		if (rsPitcher.GetRowsFetched() == 1)
+		if (rsPitcher.GetRecordCount() == 1)
 		{
 			// Batter exists Therefore add statistics to this pitcher
 

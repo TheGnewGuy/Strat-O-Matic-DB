@@ -2,7 +2,7 @@
 
 #pragma once
 
-// code generated on Tuesday, March 25, 2014, 8:39 PM
+// code generated on Wednesday, April 09, 2014, 5:17 PM
 
 class CTeams : public CRecordset
 {
@@ -32,6 +32,7 @@ public:
 	long	m_ConferenceID;
 	long	m_DivisionID;
 	CString	m_TeamYear;
+	BOOL	m_BaseTeam;
 	COleDateTime	m_LastUpdateTime;
 
 // Overrides

@@ -4,7 +4,7 @@
 
 // CConferences implementation
 
-// code generated on Monday, March 10, 2014, 1:33 PM
+// code generated on Wednesday, April 09, 2014, 5:16 PM
 
 #include "stdafx.h"
 #include "Conferences.h"
@@ -16,8 +16,9 @@ CConferences::CConferences(CDatabase* pdb)
 	m_ConferenceID = 0;
 	m_ConferenceName = L"";
 	m_LeagueID = 0;
+	m_BaseConference = FALSE;
 	m_LastUpdateTime;
-	m_nFields = 4;
+	m_nFields = 5;
 	m_nDefaultType = dynaset;
 }
 //#error Security Issue: The connection string may contain a password
@@ -44,6 +45,7 @@ void CConferences::DoFieldExchange(CFieldExchange* pFX)
 	RFX_Long(pFX, _T("[ConferenceID]"), m_ConferenceID);
 	RFX_Text(pFX, _T("[ConferenceName]"), m_ConferenceName);
 	RFX_Long(pFX, _T("[LeagueID]"), m_LeagueID);
+	RFX_Bool(pFX, _T("[BaseConference]"), m_BaseConference);
 	RFX_Date(pFX, _T("[LastUpdateTime]"), m_LastUpdateTime);
 
 }
