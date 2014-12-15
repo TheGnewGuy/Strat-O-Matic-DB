@@ -46,7 +46,8 @@ CStratOMaticDBDoc::CStratOMaticDBDoc()
 {
 	CString sDriver = _T("MICROSOFT ACCESS DRIVER (*.mdb, *.accdb)");
 	CString sDsn;
-	CString sFile = _T("C:\\Family\\SOURCE\\C\\Strat-O-Matic-DB\\Baseball.accdb");
+//	CString sFile = _T("C:\\Family\\SOURCE\\C\\Strat-O-Matic-DB\\Baseball.accdb");
+	CString sFile = _T("C:\\Data\\Source\\Projects\\Strat-O-Matic-DB\\Baseball.accdb");
 	CString SqlString;
 
 	// Build ODBC connection string
@@ -221,7 +222,8 @@ void CStratOMaticDBDoc::OnDbSelect()
 	CString sDriver = _T("MICROSOFT ACCESS DRIVER (*.mdb, *.accdb)");
 	//	CString sDriver = "MS Access Database";  // This does not work
 	CString sDsn;
-	CString sFile = _T("C:\\Family\\SOURCE\\C\\Strat-O-Matic-DB\\Baseball.accdb");
+//	CString sFile = _T("C:\\Family\\SOURCE\\C\\Strat-O-Matic-DB\\Baseball.accdb");
+	CString sFile = _T("C:\\Data\\Source\\Projects\\Strat-O-Matic-DB\\Baseball.accdb");
 	// You must change above path if it's different
 	int iRec = 0;
 
@@ -278,7 +280,8 @@ void CStratOMaticDBDoc::OnDbAdd()
 	CString sDriver = _T("MICROSOFT ACCESS DRIVER (*.mdb, *.accdb)");
 	//	CString sDriver = "MS Access Database";  // This does not work
 	CString sDsn;
-	CString sFile = _T("C:\\Family\\SOURCE\\C\\Strat-O-Matic-DB\\Baseball.accdb");
+//	CString sFile = _T("C:\\Family\\SOURCE\\C\\Strat-O-Matic-DB\\Baseball.accdb");
+	CString sFile = _T("C:\\Data\\Source\\Projects\\Strat-O-Matic-DB\\Baseball.accdb");
 	// You must change above path if it's different
 	int iRec = 0;
 
