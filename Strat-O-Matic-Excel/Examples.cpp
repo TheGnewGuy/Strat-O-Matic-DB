@@ -16,8 +16,10 @@
 
 #include "stdafx.h"
 #include "ExcelFormat.h"
+#include "boost/date_time/gregorian/gregorian.hpp"
 
 using namespace ExcelFormat;
+namespace bdt = boost::gregorian;
 
 
 #ifdef _WIN32
@@ -172,7 +174,14 @@ static void example3(const char* path)
 	fmt.set_format_string(XLS_FORMAT_DATE);
 	fmt.set_font(ExcelFont().set_weight(FW_BOLD));
 	cell = sheet->Cell(0, 2);
-	cell->Set("03.03.2000");
+//	cell->Set("03.04.2010");	// All this does is create a text box
+//	cell->Set(40241.);
+	// The actual date in excel is created based on the start date of Jan 0, 1900
+	bdt::date startdate(bdt::date(1899, bdt::Dec, 31));
+	bdt::date enddate(bdt::date(2010, bdt::Mar, 4));
+	bdt::date_period range(startdate, enddate);
+
+	cell->Set(range.length().days() + 1);
 	cell->SetFormat(fmt);
 
 
@@ -212,8 +221,9 @@ static void example_read_write(const char* from, const char* to)
 
 	fmt_general.set_format_string("0.000");
 
+	// Two rows with three colums
 	for(int y=0; y<2; ++y) {
-		for(int x=0; x<2; ++x) {
+		for(int x=0; x<3; ++x) {
 			cout << y << "/" << x;
 
 			BasicExcelCell* cell = sheet->Cell(y, x);
@@ -229,13 +239,42 @@ static void example_read_write(const char* from, const char* to)
 			const wstring& fmt_string = fmt.get_format_string();
 			cout << "  format: " << narrow_string(fmt_string);
 
-			cell->SetFormat(fmt_general);
+			// The following was clearing the format so the copied sheet had general formating.
+			//cell->SetFormat(fmt_general);
+			int tempi;
+			double tempd;
+			string temps;
+			int celltype = cell->Type();
+			switch (cell->Type())
+			{
+				case BasicExcelCell::UNDEFINED:
+					cout << " UNDEFINED Data: " << "?" << endl;
+					break;
+				case BasicExcelCell::FORMULA:
+					cout << " FORMULA Data: " << "?" << endl;
+					break;
+				case BasicExcelCell::INT:
+					tempi = cell->GetInteger();
+					cout << " INT Data: " << tempi << endl;
+					break;
+				case BasicExcelCell::DOUBLE:
+					tempd = cell->GetDouble();
+					cout << " DOUBLE Data: " << tempd << endl;
+					break;
+				case BasicExcelCell::STRING:
+					temps = cell->GetString();
+					cout << " STRING Data: " << temps << endl;
+					break;
+				case BasicExcelCell::WSTRING:
+					cout << " WSTRING Data: " << "?" << endl;
+					break;
+			}
 
 			cout << endl;
 		}
 	}
 
-	cout << "write: " << from << endl;
+	cout << "write: " << to << endl;
 	xls.SaveAs(to);
 }
 
@@ -385,8 +424,8 @@ int main(int argc, char** argv)
 	 // open the output files in Excel
 	//ShellExecute(0, NULL, L"example1.xls", NULL, NULL, SW_NORMAL);
 	//ShellExecute(0, NULL, L"example2.xls", NULL, NULL, SW_NORMAL);
-	//ShellExecute(0, NULL, L"example3.xls", NULL, NULL, SW_NORMAL);
-	//ShellExecute(0, NULL, L"example3.out.xls", NULL, NULL, SW_NORMAL);
+	ShellExecute(0, NULL, L"example3.xls", NULL, NULL, SW_NORMAL);
+	ShellExecute(0, NULL, L"example3-out.xls", NULL, NULL, SW_NORMAL);
 	//ShellExecute(0, NULL, L"example4.xls", NULL, NULL, SW_NORMAL);
 	//ShellExecute(0, NULL, L"big-example.xls", NULL, NULL, SW_NORMAL);
 #endif
