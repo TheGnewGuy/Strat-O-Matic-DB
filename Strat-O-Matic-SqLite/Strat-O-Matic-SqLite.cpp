@@ -2,6 +2,7 @@
 // Strat-O-Matic-SqLite.cpp : Defines the class behaviors for the application.
 //
 
+#include <afxdlgs.h>  // to support common dialogs
 #include "stdafx.h"
 #include "afxwinappex.h"
 #include "afxdialogex.h"
@@ -10,6 +11,12 @@
 
 #include "Strat-O-Matic-SqLiteDoc.h"
 #include "Strat-O-Matic-SqLiteView.h"
+
+// GLOBAL VARIABLES
+
+CString MyFileName = _T("");
+
+// END GLOBAL VARIABLES
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,9 +29,10 @@ BEGIN_MESSAGE_MAP(CStratOMaticSqLiteApp, CWinApp)
 	ON_COMMAND(ID_APP_ABOUT, &CStratOMaticSqLiteApp::OnAppAbout)
 	// Standard file based document commands
 	ON_COMMAND(ID_FILE_NEW, &CWinApp::OnFileNew)
-	ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
+	//ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
 	// Standard print setup command
 	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinApp::OnFilePrintSetup)
+	ON_COMMAND(ID_FILE_OPEN, &CStratOMaticSqLiteApp::OnFileOpen)
 END_MESSAGE_MAP()
 
 
@@ -147,5 +155,16 @@ void CStratOMaticSqLiteApp::OnAppAbout()
 
 // CStratOMaticSqLiteApp message handlers
 
-
-
+void CStratOMaticSqLiteApp::OnFileOpen()
+{
+	// TODO: Add your command handler code here
+	CFileDialog* myfiledlg;
+	//static char BASED_CODE szFilter[] = "DataBase Files (*.db)|*.db|All Files (*.*)|*.*||";
+	LPCTSTR lpszFilter = _T("DataBase Files (*.db)|*.db|All Files (*.*)|*.*||");
+	myfiledlg = new CFileDialog(TRUE, _T("*.db"), NULL, NULL, lpszFilter, NULL);
+	myfiledlg->m_ofn.lpstrTitle = _T("Load DataBase File");
+	myfiledlg->DoModal();
+	MyFileName = myfiledlg->GetPathName();
+	int temp;
+	temp = AfxMessageBox(MyFileName, MB_YESNO | MB_ICONQUESTION, 0);
+}

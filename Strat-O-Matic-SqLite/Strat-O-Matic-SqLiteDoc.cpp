@@ -10,6 +10,7 @@
 #endif
 
 #include "Strat-O-Matic-SqLiteDoc.h"
+#include "sqlite3.h"
 
 #include <propkey.h>
 
