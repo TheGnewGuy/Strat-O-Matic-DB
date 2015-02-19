@@ -19,13 +19,13 @@
 
 // CStratOMaticSqLiteView
 
-IMPLEMENT_DYNCREATE(CStratOMaticSqLiteView, CView)
+IMPLEMENT_DYNCREATE(CStratOMaticSqLiteView, CScrollView)
 
-BEGIN_MESSAGE_MAP(CStratOMaticSqLiteView, CView)
+BEGIN_MESSAGE_MAP(CStratOMaticSqLiteView, CScrollView)
 	// Standard printing commands
-	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+	ON_COMMAND(ID_FILE_PRINT, &CScrollView::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CScrollView::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CScrollView::OnFilePrintPreview)
 END_MESSAGE_MAP()
 
 // CStratOMaticSqLiteView construction/destruction
@@ -45,12 +45,12 @@ BOOL CStratOMaticSqLiteView::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
 
-	return CView::PreCreateWindow(cs);
+	return CScrollView::PreCreateWindow(cs);
 }
 
 // CStratOMaticSqLiteView drawing
 
-void CStratOMaticSqLiteView::OnDraw(CDC* /*pDC*/)
+void CStratOMaticSqLiteView::OnDraw(CDC* pDC)
 {
 	CStratOMaticSqLiteDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
@@ -58,6 +58,25 @@ void CStratOMaticSqLiteView::OnDraw(CDC* /*pDC*/)
 		return;
 
 	// TODO: add draw code for native data here
+
+	// A possible solution will be to have all output text in a CStringArray
+	
+	TEXTMETRIC mytextmetric;
+	pDC->GetTextMetrics(&mytextmetric);
+	int myheight = mytextmetric.tmHeight + mytextmetric.tmExternalLeading;
+
+	// Print "Hello, world!" 10 times.
+	CString m_HelloString;
+	int counter = 0;
+	for (int i = 0; i < 800; i += myheight)
+	{
+		counter++;
+		m_HelloString.Format(_T("%i %i Hello, world!"), counter, i);
+		pDC->TextOut(0, i, m_HelloString);
+	}
+
+	// Need to keep track of the number of lines and the height of each line.
+	SetScrollSizes(MM_TEXT, CSize(1280, (counter) * myheight));
 }
 
 
@@ -85,12 +104,12 @@ void CStratOMaticSqLiteView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 #ifdef _DEBUG
 void CStratOMaticSqLiteView::AssertValid() const
 {
-	CView::AssertValid();
+	CScrollView::AssertValid();
 }
 
 void CStratOMaticSqLiteView::Dump(CDumpContext& dc) const
 {
-	CView::Dump(dc);
+	CScrollView::Dump(dc);
 }
 
 CStratOMaticSqLiteDoc* CStratOMaticSqLiteView::GetDocument() const // non-debug version is inline
@@ -102,3 +121,12 @@ CStratOMaticSqLiteDoc* CStratOMaticSqLiteView::GetDocument() const // non-debug 
 
 
 // CStratOMaticSqLiteView message handlers
+
+
+void CStratOMaticSqLiteView::OnInitialUpdate()
+{
+	CScrollView::OnInitialUpdate();
+
+	// TODO: Add your specialized code here and/or call the base class
+	SetScrollSizes(MM_TEXT, CSize(1280, 1024));
+}

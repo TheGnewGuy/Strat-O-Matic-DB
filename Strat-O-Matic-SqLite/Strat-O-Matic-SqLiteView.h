@@ -5,7 +5,7 @@
 #pragma once
 
 
-class CStratOMaticSqLiteView : public CView
+class CStratOMaticSqLiteView : public CScrollView
 {
 protected: // create from serialization only
 	CStratOMaticSqLiteView();
@@ -40,6 +40,8 @@ protected:
 // Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	virtual void OnInitialUpdate();
 };
 
 #ifndef _DEBUG  // debug version in Strat-O-Matic-SqLiteView.cpp
