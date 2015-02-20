@@ -27,7 +27,6 @@ public:
 // Implementation
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
-	afx_msg void OnFileOpen();
 };
 
 extern CStratOMaticSqLiteApp theApp;

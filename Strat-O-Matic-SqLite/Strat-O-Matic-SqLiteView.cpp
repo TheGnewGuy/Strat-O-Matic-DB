@@ -65,18 +65,18 @@ void CStratOMaticSqLiteView::OnDraw(CDC* pDC)
 	pDC->GetTextMetrics(&mytextmetric);
 	int myheight = mytextmetric.tmHeight + mytextmetric.tmExternalLeading;
 
-	// Print "Hello, world!" 10 times.
-	CString m_HelloString;
-	int counter = 0;
-	for (int i = 0; i < 800; i += myheight)
+	int y_on_page = 0;
+	int array_count = pDoc->m_str_array_logmsgs.GetCount();
+	for (int i = 0; i < array_count; i++)
 	{
-		counter++;
-		m_HelloString.Format(_T("%i %i Hello, world!"), counter, i);
-		pDC->TextOut(0, i, m_HelloString);
+		pDC->TextOutW(0, y_on_page, pDoc->m_str_array_logmsgs.GetAt(i));
+		y_on_page += myheight;
 	}
 
 	// Need to keep track of the number of lines and the height of each line.
-	SetScrollSizes(MM_TEXT, CSize(1280, (counter) * myheight));
+	if (array_count < 1) array_count = 1;
+	SetScrollSizes(MM_TEXT, CSize(1280, array_count * myheight));
+	//AfxMessageBox(pDoc->m_DBFileName, MB_YESNO | MB_ICONQUESTION, 0);
 }
 
 

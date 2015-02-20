@@ -23,6 +23,7 @@
 IMPLEMENT_DYNCREATE(CStratOMaticSqLiteDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CStratOMaticSqLiteDoc, CDocument)
+	ON_COMMAND(ID_FILE_OPEN, &CStratOMaticSqLiteDoc::OnFileOpen)
 END_MESSAGE_MAP()
 
 
@@ -32,6 +33,8 @@ CStratOMaticSqLiteDoc::CStratOMaticSqLiteDoc()
 {
 	// TODO: add one-time construction code here
 
+	m_DBFileName = _T("");
+	m_str_array_logmsgs.Add(_T("Start"));
 }
 
 CStratOMaticSqLiteDoc::~CStratOMaticSqLiteDoc()
@@ -136,3 +139,22 @@ void CStratOMaticSqLiteDoc::Dump(CDumpContext& dc) const
 
 
 // CStratOMaticSqLiteDoc commands
+
+
+void CStratOMaticSqLiteDoc::OnFileOpen()
+{
+	// TODO: Add your command handler code here
+	CFileDialog* myfiledlg;
+	LPCTSTR lpszFilter = _T("DataBase Files (*.db)|*.db|All Files (*.*)|*.*||");
+	myfiledlg = new CFileDialog(TRUE, _T("*.db"), NULL, NULL, lpszFilter, NULL);
+	myfiledlg->m_ofn.lpstrTitle = _T("Load DataBase File");
+	myfiledlg->DoModal();
+	m_DBFileName = myfiledlg->GetPathName();
+	m_str_array_logmsgs.Add(m_DBFileName);
+
+	// The InvalidateRect is to force a window update.
+	InvalidateRect(AfxGetMainWnd()->m_hWnd, NULL, FALSE);
+
+	//int temp;
+	//temp = AfxMessageBox(m_DBFileName, MB_YESNO | MB_ICONQUESTION, 0);
+}

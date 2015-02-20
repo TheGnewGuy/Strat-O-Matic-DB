@@ -46,4 +46,7 @@ protected:
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
 public:
+	afx_msg void OnFileOpen();
+	CString m_DBFileName;
+	CStringArray m_str_array_logmsgs;
 };

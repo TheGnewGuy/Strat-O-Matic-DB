@@ -14,8 +14,6 @@
 
 // GLOBAL VARIABLES
 
-CString MyFileName = _T("");
-
 // END GLOBAL VARIABLES
 
 #ifdef _DEBUG
@@ -32,7 +30,7 @@ BEGIN_MESSAGE_MAP(CStratOMaticSqLiteApp, CWinApp)
 	//ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
 	// Standard print setup command
 	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinApp::OnFilePrintSetup)
-	ON_COMMAND(ID_FILE_OPEN, &CStratOMaticSqLiteApp::OnFileOpen)
+//	ON_COMMAND(ID_FILE_OPEN, &CStratOMaticSqLiteApp::OnFileOpen)
 END_MESSAGE_MAP()
 
 
@@ -154,17 +152,3 @@ void CStratOMaticSqLiteApp::OnAppAbout()
 }
 
 // CStratOMaticSqLiteApp message handlers
-
-void CStratOMaticSqLiteApp::OnFileOpen()
-{
-	// TODO: Add your command handler code here
-	CFileDialog* myfiledlg;
-	//static char BASED_CODE szFilter[] = "DataBase Files (*.db)|*.db|All Files (*.*)|*.*||";
-	LPCTSTR lpszFilter = _T("DataBase Files (*.db)|*.db|All Files (*.*)|*.*||");
-	myfiledlg = new CFileDialog(TRUE, _T("*.db"), NULL, NULL, lpszFilter, NULL);
-	myfiledlg->m_ofn.lpstrTitle = _T("Load DataBase File");
-	myfiledlg->DoModal();
-	MyFileName = myfiledlg->GetPathName();
-	int temp;
-	temp = AfxMessageBox(MyFileName, MB_YESNO | MB_ICONQUESTION, 0);
-}
