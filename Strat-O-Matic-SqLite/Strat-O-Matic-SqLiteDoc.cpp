@@ -13,6 +13,7 @@
 #include "sqlite3.h"
 
 #include <propkey.h>
+#include <stdio.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,11 +35,16 @@ CStratOMaticSqLiteDoc::CStratOMaticSqLiteDoc()
 	// TODO: add one-time construction code here
 
 	m_DBFileName = _T("");
-	m_str_array_logmsgs.Add(_T("Start"));
+	m_dbOpen = 99;		// SQLITE_OK is set to '0'
 }
 
 CStratOMaticSqLiteDoc::~CStratOMaticSqLiteDoc()
 {
+	if (m_dbOpen = SQLITE_OK)
+	{
+		sqlite3_close(m_db);
+		m_dbOpen = 99;
+	}
 }
 
 BOOL CStratOMaticSqLiteDoc::OnNewDocument()
@@ -144,17 +150,98 @@ void CStratOMaticSqLiteDoc::Dump(CDumpContext& dc) const
 void CStratOMaticSqLiteDoc::OnFileOpen()
 {
 	// TODO: Add your command handler code here
+	CHAR buffer[100];
 	CFileDialog* myfiledlg;
 	LPCTSTR lpszFilter = _T("DataBase Files (*.db)|*.db|All Files (*.*)|*.*||");
 	myfiledlg = new CFileDialog(TRUE, _T("*.db"), NULL, NULL, lpszFilter, NULL);
 	myfiledlg->m_ofn.lpstrTitle = _T("Load DataBase File");
 	myfiledlg->DoModal();
 	m_DBFileName = myfiledlg->GetPathName();
-	m_str_array_logmsgs.Add(m_DBFileName);
+	CStringA ansiString(m_DBFileName);
+	AddToLog(m_DBFileName);
 
-	// The InvalidateRect is to force a window update.
-	InvalidateRect(AfxGetMainWnd()->m_hWnd, NULL, FALSE);
+	if (m_dbOpen = SQLITE_OK)
+	{
+		sqlite3_close(m_db);
+		m_dbOpen = 99;
+	}
+
+	m_dbOpen = sqlite3_open(ansiString, &m_db);
+	if (m_dbOpen)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Can't open database: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Database opened: %s\n", ansiString);
+		AddToLog(buffer);
+		//AddToLog(_T("Database opened:"));
+		int rc = sqlite3_prepare_v2(m_db, "SELECT SQLITE_VERSION()", -1, &m_stmt, 0);
+
+		if (rc != SQLITE_OK) 
+		{
+
+			//fprintf(stderr, "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+			sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+			AddToLog(buffer);
+		}
+
+		rc = sqlite3_step(m_stmt);
+
+		if (rc == SQLITE_ROW)
+		{
+			//printf("%s  %s\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_text(m_stmt, 0));
+			sprintf_s(buffer, sizeof(buffer), "%s  %s\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_text(m_stmt, 0));
+			AddToLog(buffer);
+		}
+
+		sqlite3_finalize(m_stmt);
+
+		/* Create SQL statement */
+		char *sql = "CREATE TABLE COMPANY("  \
+			"ID INT PRIMARY KEY     NOT NULL," \
+			"NAME           TEXT    NOT NULL," \
+			"AGE            INT     NOT NULL," \
+			"ADDRESS        CHAR(50)," \
+			"SALARY         REAL );";
+		rc = sqlite3_prepare_v2(m_db, sql, -1, &m_stmt, 0);
+		if (rc != SQLITE_OK)
+		{
+
+			//fprintf(stderr, "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+			sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+			AddToLog(buffer);
+		}
+
+		rc = sqlite3_step(m_stmt);
+
+		if (rc != SQLITE_DONE)
+		{
+			//printf("%s  %s\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_text(m_stmt, 0));
+			sprintf_s(buffer, sizeof(buffer), "Failed to insert item: %s\n", sqlite3_errmsg(m_db));
+			AddToLog(buffer);
+		}
+
+		sqlite3_finalize(m_stmt);
+	}
 
 	//int temp;
 	//temp = AfxMessageBox(m_DBFileName, MB_YESNO | MB_ICONQUESTION, 0);
+}
+
+
+void CStratOMaticSqLiteDoc::AddToLog(LPCTSTR msg)
+{
+	m_str_array_logmsgs.Add(msg);
+	// The InvalidateRect is to force a window update.
+	InvalidateRect(AfxGetMainWnd()->m_hWnd, NULL, FALSE);
+}
+
+
+void CStratOMaticSqLiteDoc::AddToLog(char* msg)
+{
+	m_str_array_logmsgs.Add(CString(msg));
+	// The InvalidateRect is to force a window update.
+	InvalidateRect(AfxGetMainWnd()->m_hWnd, NULL, FALSE);
 }

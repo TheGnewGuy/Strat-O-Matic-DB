@@ -1,7 +1,7 @@
 
 // Strat-O-Matic-SqLiteDoc.h : interface of the CStratOMaticSqLiteDoc class
 //
-
+#include "sqlite3.h"
 
 #pragma once
 
@@ -49,4 +49,9 @@ public:
 	afx_msg void OnFileOpen();
 	CString m_DBFileName;
 	CStringArray m_str_array_logmsgs;
+	sqlite3 *m_db;
+	sqlite3_stmt *m_stmt;
+	void AddToLog(LPCTSTR msg);
+	int m_dbOpen;
+	void AddToLog(char* msg);
 };
