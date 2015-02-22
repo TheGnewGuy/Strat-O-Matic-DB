@@ -113,6 +113,8 @@ BEGIN
         MENUITEM "Insert Team",                 ID_SQL_INSERTTEAM
         MENUITEM "Insert Batter",               ID_SQL_INSERTBATTER
         MENUITEM "Insert BatterStats",          ID_SQL_INSERTBATTERSTATS
+        MENUITEM SEPARATOR
+        MENUITEM "DbConvert",                   ID_SQL_DBCONVERT
     END
     POPUP "&Help"
     BEGIN

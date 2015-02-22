@@ -59,4 +59,8 @@ public:
 	afx_msg void OnSqlInsertTeam();
 	afx_msg void OnSqlInsertBatter();
 	afx_msg void OnSqlInsertBatterStats();
+	afx_msg void OnSqlDbconvert();
+	bool CreateDefaultLeague();
+	void ExportLeagueFileToDB(CString strLeagueDir, CString strteamName);
+	void ExportBaseFileToDB(CString strDir, CString strTeamName);
 };
