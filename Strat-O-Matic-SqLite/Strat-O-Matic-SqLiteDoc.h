@@ -54,4 +54,9 @@ public:
 	void AddToLog(LPCTSTR msg);
 	int m_dbOpen;
 	void AddToLog(char* msg);
+	afx_msg void OnSqlCreateTable();
+	afx_msg void OnSqlDeleteTable();
+	afx_msg void OnSqlInsertTeam();
+	afx_msg void OnSqlInsertBatter();
+	afx_msg void OnSqlInsertBatterStats();
 };
