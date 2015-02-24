@@ -567,7 +567,7 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"HBP                   INT      NOT NULL," \
 		"AVG                   FLOAT    NOT NULL," \
 		"SLG                   FLOAT    NOT NULL," \
-		"OVP                   FLOAT    NOT NULL," \
+		"OBP                   FLOAT    NOT NULL," \
 		"BatterID              INTEGER  NOT NULL," \
 		"TeamID                INTEGER  NOT NULL," \
 		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
@@ -665,186 +665,18 @@ void CStratOMaticSqLiteDoc::OnSqlInsertBatter()
 void CStratOMaticSqLiteDoc::OnSqlInsertBatterStats()
 {
 	// TODO: Add your command handler code here
-	int rc;
-	CHAR buffer[100];
-	char *sqlBatter;
-	char *sqlSelect;
-	int myTeamID;
-	int myBatterID;
+	int myTeamID = 0;
+	int myBatterID = 0;
 
 	// Select the TeamId
-	sqlSelect = "SELECT TeamId from TEAM WHERE TeamName = ?1 " \
-		"and TeamYear = ?2";
-	rc = sqlite3_prepare_v2(m_db, sqlSelect, strlen(sqlSelect), &m_stmt, 0);
-
-	if (rc != SQLITE_OK)
-	{
-		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-	//	char * newteamname = "Detriot Tigers";
-	char * newteamname = "Cleveland Indians";
-	// Bind the data to field '1' which is the first '?' in the SELECT statement
-	rc = sqlite3_bind_text(m_stmt, 1, newteamname, strlen(newteamname), SQLITE_STATIC);
-	if (rc != SQLITE_OK)
-	{
-		sprintf_s(buffer, sizeof(buffer), "Could not bind teamname: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-	rc = sqlite3_bind_int(m_stmt, 2, 1965);
-	if (rc != SQLITE_OK)
-	{
-		sprintf_s(buffer, sizeof(buffer), "Could not bind year: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-
-	rc = sqlite3_step(m_stmt);
-
-	if (rc == SQLITE_ROW)
-	{
-		sprintf_s(buffer, sizeof(buffer), "%s  %i\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_int(m_stmt, 0));
-		AddToLog(buffer);
-		myTeamID = sqlite3_column_int(m_stmt, 0);
-	}
-	else
-	{
-		sprintf_s(buffer, sizeof(buffer), "Select returned nothing: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-
-	sqlite3_finalize(m_stmt);
+	myTeamID =  GetTeamID("Cleveland Indians", 1965);
 
 	// Select the BatterId
-	sqlSelect = "SELECT BatterID from BATTER WHERE FirstName = ?1 and LastName = ?2";
+	myBatterID = GetBatterID("Max", "Alvis");
 
-	rc = sqlite3_prepare_v2(m_db, sqlSelect, strlen(sqlSelect), &m_stmt, 0);
-
-	if (rc != SQLITE_OK)
-	{
-		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-	char * newfirstname = "Max";
-	char * newlastname = "Alvis";
-	// Bind the data to field '1' which is the first '?' in the SELECT statement
-	rc = sqlite3_bind_text(m_stmt, 1, newfirstname, strlen(newfirstname), SQLITE_STATIC);
-	if (rc != SQLITE_OK)
-	{
-		sprintf_s(buffer, sizeof(buffer), "Could not bind teamname: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-	rc = sqlite3_bind_text(m_stmt, 2, newlastname, strlen(newlastname), SQLITE_STATIC);
-	if (rc != SQLITE_OK)
-	{
-		sprintf_s(buffer, sizeof(buffer), "Could not bind year: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-
-	rc = sqlite3_step(m_stmt);
-
-	if (rc == SQLITE_ROW)
-	{
-		sprintf_s(buffer, sizeof(buffer), "%s  %i\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_int(m_stmt, 0));
-		AddToLog(buffer);
-		myBatterID = sqlite3_column_int(m_stmt, 0);
-	}
-	else
-	{
-		sprintf_s(buffer, sizeof(buffer), "Select returned nothing: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-
-	sqlite3_finalize(m_stmt);
-
-	/* Create SQL statement */
-	sqlBatter = "INSERT INTO BATTERSTATS("  \
-		"AB," \
-		"Runs," \
-		"Hits," \
-		"RBI," \
-		"Doubles," \
-		"Triples," \
-		"HomeRuns," \
-		"Walk," \
-		"Stirkeout," \
-		"ReachedOnError," \
-		"Sacrifice," \
-		"StolenBase," \
-		"CS," \
-		"Games," \
-		"HBP," \
-		"AVG," \
-		"SLG," \
-		"OVP," \
-		"BatterID," \
-		"TeamID" \
-		")" \
-		"VALUES (" \
-		"0," \
-		"0," \
-		"0," \
-		"3," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"0," \
-		"?1," \
-		"?2" \
-		");";
-
-	rc = sqlite3_prepare_v2(m_db, sqlBatter, strlen(sqlBatter), &m_stmt, 0);
-	if (rc != SQLITE_OK)
-	{
-
-		//fprintf(stderr, "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
-		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-	else
-	{
-		sprintf_s(buffer, sizeof(buffer), "Prepare for Batter Insert OK: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-
-	// Bind the data to field '1' which is the first '?' in the INSERT statement
-	rc = sqlite3_bind_int(m_stmt, 1, myBatterID);
-	if (rc != SQLITE_OK)
-	{
-		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-	rc = sqlite3_bind_int(m_stmt, 2, myTeamID);
-	if (rc != SQLITE_OK)
-	{
-		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-
-	rc = sqlite3_step(m_stmt);
-
-	if (rc != SQLITE_DONE)
-	{
-		//printf("%s  %s\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_text(m_stmt, 0));
-		sprintf_s(buffer, sizeof(buffer), "Failed to insert item: %s\n", sqlite3_errmsg(m_db));
-		AddToLog(buffer);
-	}
-	else
-	{
-		sprintf_s(buffer, sizeof(buffer), "Execute for Batter Insert OK.\n");
-		AddToLog(buffer);
-	}
-
-	sqlite3_finalize(m_stmt);
+	BatterStatsInsert(100, 6, 27, 5, 3, 2, 1, 6,
+		7, 1, 1, 2, 1, 25, 0, 0.324, 0.205, 0.123,
+		myBatterID, myTeamID);
 }
 
 
@@ -3675,4 +3507,263 @@ int CStratOMaticSqLiteDoc::GetTeamID(CStringA strTeamName, int Year)
 		AddToLog(buffer);
 	}
 	return myTeamId;
+}
+
+
+int CStratOMaticSqLiteDoc::BatterStatsInsert(int AB, int Runs, int Hits, int RBI, int Doubles, int Triples, int HomeRuns, int Walk, 
+	int Strikout, int ReachedOnError, int Sacrifice, int StolenBase, int CS, int Games, int HBP, float AVG, float SLG, float OBP, 
+	int BatterID, int TeamID)
+{
+	int rc;
+	CHAR buffer[100];
+	char *sqlBatterStats;
+
+	/* Create SQL statement */
+	sqlBatterStats = "INSERT INTO BATTERSTATS("  \
+		"AB," \
+		"Runs," \
+		"Hits," \
+		"RBI," \
+		"Doubles," \
+		"Triples," \
+		"HomeRuns," \
+		"Walk," \
+		"Stirkeout," \
+		"ReachedOnError," \
+		"Sacrifice," \
+		"StolenBase," \
+		"CS," \
+		"Games," \
+		"HBP," \
+		"AVG," \
+		"SLG," \
+		"OBP," \
+		"BatterID," \
+		"TeamID" \
+		")" \
+		"VALUES (" \
+		"?1," \
+		"?2," \
+		"?3," \
+		"?4," \
+		"?5," \
+		"?6," \
+		"?7," \
+		"?8," \
+		"?9," \
+		"?10," \
+		"?11," \
+		"?12," \
+		"?13," \
+		"?14," \
+		"?15," \
+		"?16," \
+		"?17," \
+		"?18," \
+		"?19," \
+		"?20" \
+		");";
+
+	rc = sqlite3_prepare_v2(m_db, sqlBatterStats, strlen(sqlBatterStats), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+
+		//fprintf(stderr, "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for Batter Insert OK: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	// Bind the data to field '1' which is the first '?' in the INSERT statement
+	rc = sqlite3_bind_int(m_stmt, 1, AB);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 2, Runs);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 3, Hits);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 4, RBI);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 5, Doubles);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 6, Triples);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 7, HomeRuns);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 8, Walk);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 9, Strikout);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 10, ReachedOnError);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 11, Sacrifice);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 12, StolenBase);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 13, CS);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 14, Games);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 15, HBP);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_double(m_stmt, 16, AVG);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_double(m_stmt, 17, SLG);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_double(m_stmt, 18, OBP);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 19, BatterID);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 20, TeamID);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	rc = sqlite3_step(m_stmt);
+
+	if (rc != SQLITE_DONE)
+	{
+		//printf("%s  %s\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_text(m_stmt, 0));
+		sprintf_s(buffer, sizeof(buffer), "Failed to insert item: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Execute for BatterStats Insert OK.\n");
+		AddToLog(buffer);
+	}
+
+	sqlite3_finalize(m_stmt);
+	return 0;
+}
+
+
+int CStratOMaticSqLiteDoc::GetBatterID(CStringA strFirstName, CStringA strLastName)
+{
+	int rc;
+	CHAR buffer[100];
+	char *sqlSelect;
+	int myBatterID;
+	sqlSelect = "SELECT BatterID from BATTER WHERE FirstName = ?1 and LastName = ?2";
+
+	rc = sqlite3_prepare_v2(m_db, sqlSelect, strlen(sqlSelect), &m_stmt, 0);
+
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	// Bind the data to field '1' which is the first '?' in the SELECT statement
+	rc = sqlite3_bind_text(m_stmt, 1, strFirstName, strlen(strFirstName), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind teamname: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_text(m_stmt, 2, strLastName, strlen(strLastName), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind year: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	rc = sqlite3_step(m_stmt);
+
+	if (rc == SQLITE_ROW)
+	{
+		sprintf_s(buffer, sizeof(buffer), "%s  %i\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_int(m_stmt, 0));
+		AddToLog(buffer);
+		myBatterID = sqlite3_column_int(m_stmt, 0);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Select returned nothing: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	sqlite3_finalize(m_stmt);
+
+	return myBatterID;
 }
