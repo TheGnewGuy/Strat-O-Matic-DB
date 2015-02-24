@@ -75,4 +75,9 @@ public:
 	int GetTeamID(CStringA strTeamName, int Year);
 	int BatterStatsInsert(int AB, int Runs, int Hits, int RBI, int Doubles, int Triples, int HomeRuns, int Walk, int Strikout, int ReachedOnError, int Sacrifice, int StolenBase, int CS, int Games, int HBP, float AVG, float SLG, float OBP, int BatterID, int TeamID);
 	int GetBatterID(CStringA strFirstName, CStringA strLastName);
+	int GetPitcherID(CStringA strFirstName, CStringA strLastName);
+	int PitcherInsert(CStringA strFirstName, CStringA strLastName, float OBChanceHomeRun, float OBChanceTriple, float OBChanceDouble, float OBChanceSingle, float OBChanceWalk, float ChanceDoublePlay, float OBChanceHomeRunRight, float OBChanceTripleRight, float OBChanceDoubleRight, float OBChanceSingleRight, float OBChanceWalkRight, float ChanceDoublePlayRight, float OBChanceHomeRunLeft, float OBChanceTripleLeft, float OBChanceDoubleLeft, float OBChanceSingleLeft, float OBChanceWalkLeft, float ChanceDoublePlayLeft, float OBChanceBasic, float OBChanceLeft, float OBChanceRight, int Starter, int Relief, int Throws, int Bunting, int Hold, int WP, int Balk, int Pitcher, int ER1, int TeamID);
+	int PitcherStatsInsert(int Wins, int Loss, int Saves, int InningsPitched, int ER, int Hits, int Walks, int Strikeouts, int HomeRuns, int Games, int CompleteGames, int Starts, float ERA, float WHIP, int PitcherID, int TeamID);
+	afx_msg void OnSqlInsertPitcher();
+	afx_msg void OnSqlInsertPitcherStats();
 };

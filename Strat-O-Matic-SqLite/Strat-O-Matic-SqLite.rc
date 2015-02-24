@@ -114,6 +114,8 @@ BEGIN
         MENUITEM "Insert Team",                 ID_SQL_INSERTTEAM
         MENUITEM "Insert Batter",               ID_SQL_INSERTBATTER
         MENUITEM "Insert BatterStats",          ID_SQL_INSERTBATTERSTATS
+        MENUITEM "Insert Pitcher",              ID_SQL_INSERTPITCHER
+        MENUITEM "Insert Pitcher Stats",        ID_SQL_INSERTPITCHERSTATS
         MENUITEM SEPARATOR
         MENUITEM "DbConvert",                   ID_SQL_DBCONVERT
     END
