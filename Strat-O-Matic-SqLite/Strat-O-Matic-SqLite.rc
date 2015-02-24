@@ -110,6 +110,7 @@ BEGIN
     BEGIN
         MENUITEM "Create Table",                ID_SQL_CREATETABLE
         MENUITEM "Delete Table",                ID_SQL_DELETETABLE
+        MENUITEM "Insert Default League",       ID_SQL_INSERTDEFAULTLEAGUE
         MENUITEM "Insert Team",                 ID_SQL_INSERTTEAM
         MENUITEM "Insert Batter",               ID_SQL_INSERTBATTER
         MENUITEM "Insert BatterStats",          ID_SQL_INSERTBATTERSTATS

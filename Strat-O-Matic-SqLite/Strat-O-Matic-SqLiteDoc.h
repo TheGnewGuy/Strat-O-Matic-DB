@@ -63,4 +63,14 @@ public:
 	bool CreateDefaultLeague();
 	void ExportLeagueFileToDB(CString strLeagueDir, CString strteamName);
 	void ExportBaseFileToDB(CString strDir, CString strTeamName);
+	afx_msg void OnSqlInsertDefaultLeague();
+	int LeagueInsert(CStringA strName, int NumberConf, int NumDivisions, bool Base);
+	int ConferenceInsert(CStringA strConfName, int LeagueID, bool Base);
+	int GetLeagueID(CStringA strLeagueName);
+	int DivisionInsert(CStringA strDivisionName, int LeagueID, int ConferenceID, bool Base);
+	int GetConferenceID(CStringA strConfName);
+	int TeamInsert(CStringA strTeamName, CStringA strTeamNameShort, CStringA strBallParkName, int HomeWins, int HomeLosses, int AwayWins, int AwayLosses, int LeagueID, int ConferenceID, int DivisionID, int Year, bool Base);
+	int GetDivisionID(CStringA strDivisionName);
+	int BatterInsert(CStringA strFirstName, CStringA strLastName, int Pitcher, int Catcher, int FirstBase, int SecondBase, int ShortStop, int ThirdBase, int LeftField, int CenterField, int RightField, int Bunting, int HitRun, int Running, int Stealing, int CatchArm, int OutArm, int PowerRight, int PowerLeft, int Pass, int TRate, int ER1, int ER2, int ER3, int ER4, int ER5, int ER6, int ER7, int ER8, int ER9, bool BatterHits, int TeamID, float OBChanceHomeRun, float OBChanceTriple, float OBChanceDouble, float OBChanceSingle, float OBChanceWalk, float ChanceDoublePlay, float OBChanceHomeRunRight, float OBChanceTripleRight, float OBChanceDoubleRight, float OBChanceSingleRight, float OBChanceWalkRight, float ChanceDoublePlayRight, float OBChanceHomeRunLeft, float OBChanceTripleLeft, float OBChanceDoubleLeft, float OBChanceSingleLeft, float OBChanceWalkLeft, float ChanceDoublePlayLeft, float OBChanceBasic, float OBChanceLeft, float OBChanceRight);
+	int GetTeamID(CStringA strTeamName, int Year);
 };
