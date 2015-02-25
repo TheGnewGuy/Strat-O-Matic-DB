@@ -1908,389 +1908,247 @@ void CStratOMaticSqLiteDoc::ExportLeagueFileToDB(CString strLeagueDir, CString s
 
 void CStratOMaticSqLiteDoc::ExportBaseFileToDB(CString strDir, CString strTeamName)
 {
-	//SYSTEMTIME lt;
-	//CString SqlString;
-	//CString lLastName;
-	//std::string strLastName;
-	//BatterStruct structBatter;
-	//PitcherStruct structPitcher;
-	//CString tmpTeamID;
-	//CString myTeam;
-	//CString strDivision;
-	////CString strTempTeam;
-	//CString myShortTeam;
-	//CString myBallpark;
-	//CString myYear;
-	//CString strBatterFirstName;
-	//CString strPitcherFirstName;
-	//BYTE count;
-	//CFile exportBatter;
-	//CFile exportPitcher;
-	//CString exportFileName;
-	//CString strexportData;
-	//int i;
-	//CString strTemp;
-	//CString myFileName;
-	//LONG lTeamSection = 74;
-	//LONG lCountSection = 1;
-	//LONG lPlayerSection = structBatter.m_RecordSize;
-	//LONG lPitcherSection = structPitcher.m_RecordSize;
-	//LONG position;
-	//char Bunting[5] = { 'A', 'B', 'C', 'D', 'E' };
-	//char HitRun[4] = { 'A', 'B', 'C', 'D' };
-	//char Stealing[7] = { '3', '2', 'A', 'B', 'C', 'D', 'E' };
-	//char BatterHits[3] = { 'L', 'R', 'S' };
-	//char Power[2] = { 'N', 'W' };
-	//int Running[15] = { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
-	//int TRate[21] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
-	//int Pass[21] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
-	//int OutArm[12] = { -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
-	//int CatchArm[10] = { -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
-	//int PHold[16] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6 };
+	SYSTEMTIME lt;
+	CString SqlString;
+	CString lLastName;
+	CStringA strLastName;
+	BatterStruct structBatter;
+	PitcherStruct structPitcher;
+	CString tmpTeamID;
+	CStringA myTeam;
+	CString strDivision;
+	//CString strTempTeam;
+	CStringA myShortTeam;
+	CStringA myBallpark;
+	CString myYear;
+	int imyYear;
+	CString strBatterFirstName;
+	CString strPitcherFirstName;
+	BYTE count;
+	CFile exportBatter;
+	CFile exportPitcher;
+	CString exportFileName;
+	CString strexportData;
+	int i;
+	CString strTemp;
+	CString myFileName;
+	LONG lTeamSection = 74;
+	LONG lCountSection = 1;
+	LONG lPlayerSection = structBatter.m_RecordSize;
+	LONG lPitcherSection = structPitcher.m_RecordSize;
+	LONG position;
+	char Bunting[5] = { 'A', 'B', 'C', 'D', 'E' };
+	char HitRun[4] = { 'A', 'B', 'C', 'D' };
+	char Stealing[7] = { '3', '2', 'A', 'B', 'C', 'D', 'E' };
+	char BatterHits[3] = { 'L', 'R', 'S' };
+	char Power[2] = { 'N', 'W' };
+	int Running[15] = { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
+	int TRate[21] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+	int Pass[21] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+	int OutArm[12] = { -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
+	int CatchArm[10] = { -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
+	int PHold[16] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6 };
+	int myteamID = 0;
+	int myLeagueID = 0;
+	int myConfID = 0;
+	int myDivisionID = 0;
+	count = 0;
 
-	//count = 0;
+	// Process Batter file
+	strTemp = _T("XB") + strTeamName.Left(20);
+	exportFileName = strDir + _T("\\") + strTemp + _T(".txt"); // dir\XB000001.txt
+	myFileName = strDir + _T("\\TB") + strTeamName.Right(10);
 
-	//// Process Batter file
-	//strTemp = "XB" + strTeamName.Left(20);
-	//exportFileName = strDir + "\\" + strTemp + ".txt"; // dir\XB000001.txt
-	//myFileName = strDir + "\\TB" + strTeamName.Right(10);
+	// Process Team entry
+	// Skip "1965 " to start with the actual team name.
+	//AfxExtractSubString(myTeam, structBatter.GetTeamBatter(myFileName), 1, _T(' '));
+	myTeam = structBatter.GetTeamBatter(myFileName).Mid(5).TrimRight(' ');
+	myShortTeam = structBatter.GetShortTeamBatter(myFileName);
+	myBallpark = structBatter.GetBallparkBatter(myFileName);
+	AfxExtractSubString(myYear, structBatter.GetTeamBatter(myFileName), 0, _T(' '));
+	imyYear = _ttoi(myYear);
 
-	//// Allocate the League recordset
-	//CLeagues rsLeague(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsLeague.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database League RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Allocate the Conference recordset
-	//CConferences rsConference(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsConference.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Conference RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Allocate the Division recordset
-	//CDivisions rsDivision(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsDivision.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Division RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Allocate the Teams recordset
-	//CTeams rsTeam(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsTeam.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Teams RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Allocate the Batter recordset
-	//CBatter rsBatter(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsBatter.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Batter RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Allocate the Batter Statistics recordset
-	//CBatterStats rsBatterStats(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsBatterStats.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database BatterStats RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Process Team entry
-	//// Skip "1965 " to start with the actual team name.
-	////AfxExtractSubString(myTeam, structBatter.GetTeamBatter(myFileName), 1, _T(' '));
-	//myTeam = structBatter.GetTeamBatter(myFileName).Mid(5).TrimRight(' ');
-	//myShortTeam = structBatter.GetShortTeamBatter(myFileName);
-	//myBallpark = structBatter.GetBallparkBatter(myFileName);
-	//AfxExtractSubString(myYear, structBatter.GetTeamBatter(myFileName), 0, _T(' '));
-
-	//// Determine if the team exists in DB.
-	//// Update the filter which is the WHERE portion
-	//rsTeam.m_strFilter = "[TeamName] = '" + myTeam + "' AND [TeamYear] = '" + myYear + "'";
-	//// Execute the query
-	//rsTeam.Requery();
-	//if (!rsTeam.GetRecordCount())
-	//{
-	//	// Team does not exist so add it
-	//	strDivision = "None";
-	//	if (myTeam == "Chicago White Sox" && myYear == "1965")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1965'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Cleveland Indians" && myYear == "1965")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1965'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Minnesota Twins" && myYear == "1965")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1965'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Cincinnati Reds" && myYear == "1965")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1965'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Los Angeles Dodgers" && myYear == "1965")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1965'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "San Francisco Giants" && myYear == "1965")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1965'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-
-	//	if (myTeam == "Baltimore Orioles" && myYear == "1969")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1969'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'BaseALEast1969'";
-	//		strDivision = "BaseALEast1969";
-	//	}
-	//	if (myTeam == "Seattle Pilots" && myYear == "1969")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1969'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'BaseALWest1969'";
-	//		strDivision = "BaseALWest1969";
-	//	}
-	//	if (myTeam == "Washington Senators" && myYear == "1969")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1969'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'BaseALEast1969'";
-	//		strDivision = "BaseALEast1969";
-	//	}
-	//	if (myTeam == "Houston Astros" && myYear == "1969")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1969'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'BaseNLWest1969'";
-	//		strDivision = "BaseNLWest1969";
-	//	}
-	//	if (myTeam == "Pittsburg Pirates" && myYear == "1969")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1969'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'BaseNLEast1969'";
-	//		strDivision = "BaseNLEast1969";
-	//	}
-	//	if (myTeam == "San Diego Padres" && myYear == "1969")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1969'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'BaseNLWest1969'";
-	//		strDivision = "BaseNLWest1969";
-	//	}
-
-	//	if (myTeam == "Cleveland" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1997'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1997'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'BaseALCentral1997'";
-	//		strDivision = "BaseALCentral1997";
-	//	}
-	//	if (myTeam == "Florida" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1997'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1997'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'BaseNLEast1997'";
-	//		strDivision = "BaseNLEast1997";
-	//	}
-	//	if (myTeam == "Anaheim" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1997'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1997'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'BaseALWest1997'";
-	//		strDivision = "BaseALWest1997";
-	//	}
-	//	if (myTeam == "Baltimore" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base1997'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1997'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'BaseALEast1997'";
-	//		strDivision = "BaseALEast1997";
-	//	}
-
-	//	if (myTeam == "Baltland" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Bostago" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Cleonto" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Seaota" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Texaheim" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Yorkcity" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Cinangeles" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Florago" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Montrado" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "NewDiego" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "Philanta" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-	//	if (myTeam == "SanLouis" && myYear == "1997")
-	//	{
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division B'";
-	//		rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//		strDivision = "None";
-	//	}
-
-	//	rsLeague.Requery();
-	//	rsConference.Requery();
-	//	rsDivision.Requery();
-
-	//	rsTeam.AddNew();
-
-	//	rsTeam.m_TeamName = myTeam;
-	//	rsTeam.m_TeamNameShort = myShortTeam;
-	//	rsTeam.m_BallparkName = myBallpark;
-	//	rsTeam.m_HomeWins = 0;
-	//	rsTeam.m_HomeLosses = 0;
-	//	rsTeam.m_AwayWins = 0;
-	//	rsTeam.m_AwayLosses = 0;
-	//	rsTeam.m_LeagueID = rsLeague.m_LeagueID;
-	//	rsTeam.m_ConferenceID = rsConference.m_ConferenceID;
-	//	if (strDivision == "None")
-	//		rsTeam.m_DivisionID = 0;
-	//	else
-	//		rsTeam.m_DivisionID = rsDivision.m_DivisionID;
-	//	rsTeam.m_TeamYear = myYear;
-	//	rsTeam.m_BaseTeam = TRUE;
-
-	//	GetLocalTime(&lt);
-	//	rsTeam.m_LastUpdateTime = lt;
-
-	//	rsTeam.Update();
-	//}
-
-	//// Re-Execute the query
-	//rsTeam.Requery();
-	//if (!rsTeam.GetRecordCount())
-	//{
-	//	// Team does not exist so there is a problem
-	//	AfxMessageBox("Database Added Team Missing RS error: ");
-	//}
+	// Determine if the team exists in DB.
+	myteamID = GetTeamID(myTeam, imyYear);
+	if (myteamID == 0)
+	{
+		if (myTeam == "Chicago White Sox" && imyYear == 1965)
+		{
+			myLeagueID = GetLeagueID("Base1965");
+			myConfID = GetConferenceID("BaseAL1965");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Cleveland Indians" && imyYear == 1965)
+		{
+			myLeagueID = GetLeagueID("Base1965");
+			myConfID = GetConferenceID("BaseAL1965");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Minnesota Twins" && imyYear == 1965)
+		{
+			myLeagueID = GetLeagueID("Base1965");
+			myConfID = GetConferenceID("BaseAL1965");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		// Extra team for some reason
+		if (myTeam == "Baltimore" && imyYear == 1965)
+		{
+			myLeagueID = GetLeagueID("Base1965");
+			myConfID = GetConferenceID("BaseAL1965");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Cincinnati Reds" && imyYear == 1965)
+		{
+			myLeagueID = GetLeagueID("Base1965");
+			myConfID = GetConferenceID("BaseNL1965");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Los Angeles Dodgers" && imyYear == 1965)
+		{
+			myLeagueID = GetLeagueID("Base1965");
+			myConfID = GetConferenceID("BaseNL1965");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "San Francisco Giants" && imyYear == 1965)
+		{
+			myLeagueID = GetLeagueID("Base1965");
+			myConfID = GetConferenceID("BaseNL1965");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Baltimore Orioles" && imyYear == 1969)
+		{
+			myLeagueID = GetLeagueID("Base1969");
+			myConfID = GetConferenceID("BaseAL1969");
+			myDivisionID = GetDivisionID("BaseALEast1969");
+		}
+		if (myTeam == "Seattle Pilots" && imyYear == 1969)
+		{
+			myLeagueID = GetLeagueID("Base1969");
+			myConfID = GetConferenceID("BaseAL1969");
+			myDivisionID = GetDivisionID("BaseALWest1969");
+		}
+		if (myTeam == "Washington Senators" && imyYear == 1969)
+		{
+			myLeagueID = GetLeagueID("Base1969");
+			myConfID = GetConferenceID("BaseAL1969");
+			myDivisionID = GetDivisionID("BaseALEast1969");
+		}
+		if (myTeam == "Houston Astros" && imyYear == 1969)
+		{
+			myLeagueID = GetLeagueID("Base1969");
+			myConfID = GetConferenceID("BaseNL1969");
+			myDivisionID = GetDivisionID("BaseNLWest1969");
+		}
+		if (myTeam == "Pittsburg Pirates" && imyYear == 1969)
+		{
+			myLeagueID = GetLeagueID("Base1969");
+			myConfID = GetConferenceID("BaseNL1969");
+			myDivisionID = GetDivisionID("BaseNLEast1969");
+		}
+		if (myTeam == "San Diego Padres" && imyYear == 1969)
+		{
+			myLeagueID = GetLeagueID("Base1969");
+			myConfID = GetConferenceID("BaseNL1969");
+			myDivisionID = GetDivisionID("BaseNLWest1969");
+		}
+		if (myTeam == "Cleveland" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base1997");
+			myConfID = GetConferenceID("BaseAL1997");
+			myDivisionID = GetDivisionID("BaseALCentral1997");
+		}
+		if (myTeam == "Florida" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base1997");
+			myConfID = GetConferenceID("BaseNL1997");
+			myDivisionID = GetDivisionID("BaseNLEast1997");
+		}
+		if (myTeam == "Anaheim" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base1997");
+			myConfID = GetConferenceID("BaseAL1997");
+			myDivisionID = GetDivisionID("BaseALWest1997");
+		}
+		if (myTeam == "Baltimore" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base1997");
+			myConfID = GetConferenceID("BaseAL1997");
+			myDivisionID = GetDivisionID("BaseALEast1997");
+		}
+		if (myTeam == "Baltland" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division A");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Bostago" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division A");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Cleonto" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division A");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Seaota" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division A");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Texaheim" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division A");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Yorkcity" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division A");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Cinangeles" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division B");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Florago" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division B");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Montrado" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division B");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "NewDiego" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division B");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "Philanta" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division B");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		if (myTeam == "SanLouis" && imyYear == 1997)
+		{
+			myLeagueID = GetLeagueID("Base Plano 97 in 99");
+			myConfID = GetConferenceID("Base Division B");
+			myDivisionID = GetDivisionID("DEFAULT");
+		}
+		TeamInsert(myTeam, myShortTeam, myBallpark, 0, 0, 0, 0, myLeagueID, myConfID, myDivisionID, imyYear, true);
+	}
 
 	//// A Team was selected so export all of the players
 	//count = structBatter.GetCountBatter(myFileName);
@@ -2656,8 +2514,20 @@ void CStratOMaticSqLiteDoc::OnSqlInsertDefaultLeague()
 	int myLeagueID = 0;
 	int myConfID = 0;
 
-	LeagueInsert("Base1965", 2, 4, true);
+	LeagueInsert("DEFAULT", 1, 1, true);
+	LeagueInsert("Base1965", 2, 0, true);
 	LeagueInsert("Base1969", 2, 4, true);
+	LeagueInsert("Base1997", 2, 6, true);
+	LeagueInsert("Base Plano 97 in 99", 2, 0, true);
+
+	// Select the LeagueId
+	myLeagueID = GetLeagueID("DEFAULT");
+	ConferenceInsert("DEFAULT", myLeagueID, true);
+	myConfID = GetConferenceID("DEFAULT");
+	DivisionInsert("DEFAULT", myLeagueID, myConfID, true);
+
+	myLeagueID = 0;
+	myConfID = 0;
 
 	// Select the LeagueId
 	myLeagueID = GetLeagueID("Base1965");
@@ -2666,19 +2536,6 @@ void CStratOMaticSqLiteDoc::OnSqlInsertDefaultLeague()
 	{
 		ConferenceInsert("BaseAL1965", myLeagueID, true);
 		ConferenceInsert("BaseNL1965", myLeagueID, true);
-		myConfID = GetConferenceID("BaseAL1965");
-		if (myConfID != 0)
-		{
-			DivisionInsert("BaseALEast1965", myLeagueID, myConfID, true);
-			DivisionInsert("BaseALWest1965", myLeagueID, myConfID, true);
-		}
-		myConfID = 0;
-		myConfID = GetConferenceID("BaseNL1965");
-		if (myConfID != 0)
-		{
-			DivisionInsert("BaseNLEast1965", myLeagueID, myConfID, true);
-			DivisionInsert("BaseNLWest1965", myLeagueID, myConfID, true);
-		}
 	}
 
 	myLeagueID = 0;
@@ -2704,6 +2561,47 @@ void CStratOMaticSqLiteDoc::OnSqlInsertDefaultLeague()
 			DivisionInsert("BaseNLEast1969", myLeagueID, myConfID, true);
 			DivisionInsert("BaseNLWest1969", myLeagueID, myConfID, true);
 		}
+	}
+
+	myLeagueID = 0;
+	myConfID = 0;
+
+	// Select the LeagueId
+	myLeagueID = GetLeagueID("Base1997");
+
+	if (myLeagueID != 0)
+	{
+		ConferenceInsert("BaseAL1997", myLeagueID, true);
+		ConferenceInsert("BaseNL1997", myLeagueID, true);
+		myConfID = GetConferenceID("BaseAL1997");
+		if (myConfID != 0)
+		{
+			DivisionInsert("BaseALEast1997", myLeagueID, myConfID, true);
+			DivisionInsert("BaseALWest1997", myLeagueID, myConfID, true);
+			DivisionInsert("BaseALCentral1997", myLeagueID, myConfID, true);
+		}
+		myConfID = 0;
+		myConfID = GetConferenceID("BaseNL1997");
+		if (myConfID != 0)
+		{
+			DivisionInsert("BaseNLEast1997", myLeagueID, myConfID, true);
+			DivisionInsert("BaseNLWest1997", myLeagueID, myConfID, true);
+			DivisionInsert("BaseNLCentral1997", myLeagueID, myConfID, true);
+		}
+	}
+	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
+	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
+
+	myLeagueID = 0;
+	myConfID = 0;
+
+	// Select the LeagueId
+	myLeagueID = GetLeagueID("Base Plano 97 in 99");
+
+	if (myLeagueID != 0)
+	{
+		ConferenceInsert("Base Division A", myLeagueID, true);
+		ConferenceInsert("Base Division B", myLeagueID, true);
 	}
 }
 
