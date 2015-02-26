@@ -80,4 +80,8 @@ public:
 	int PitcherStatsInsert(int Wins, int Loss, int Saves, int InningsPitched, int ER, int Hits, int Walks, int Strikeouts, int HomeRuns, int Games, int CompleteGames, int Starts, float ERA, float WHIP, int PitcherID, int TeamID);
 	afx_msg void OnSqlInsertPitcher();
 	afx_msg void OnSqlInsertPitcherStats();
+	int GetBatterID(CStringA strFirstName, CStringA strLastName, int TeamID);
+	int GetPitcherID(CStringA strFirstName, CStringA strLastName, int TeamID);
+	int GetTeamID(CStringA strTeamName, int Year, int LeagueID);
+	int GetTeamIDBase(CStringA strTeamName, int Year, bool Base);
 };

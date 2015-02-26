@@ -17,6 +17,7 @@
 
 #include <propkey.h>
 #include <stdio.h>
+#include <string>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -681,7 +682,7 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"Wins                  INT      NOT NULL," \
 		"Loss                  INT      NOT NULL," \
 		"Saves                 INT      NOT NULL," \
-		"InningsPitched        INT      NOT NULL," \
+		"InningsPitched        FLOAT    NOT NULL," \
 		"ER                    INT      NOT NULL," \
 		"Hits                  INT      NOT NULL," \
 		"Walks                 INT      NOT NULL," \
@@ -733,6 +734,130 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 void CStratOMaticSqLiteDoc::OnSqlDeleteTable()
 {
 	// TODO: Add your command handler code here
+	char *sqlstmt;
+	int rc;
+	CHAR buffer[100];
+
+	/* Create SQL statement */
+	sqlstmt = "DROP TABLE IF EXISTS PITCHERSTATS;";
+
+	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for DROP OK:\n");
+		AddToLog(buffer);
+	}
+	rc = sqlite3_step(m_stmt);
+
+	/* Create SQL statement */
+	sqlstmt = "DROP TABLE IF EXISTS PITCHER;";
+	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for DROP OK:\n");
+		AddToLog(buffer);
+	}
+	rc = sqlite3_step(m_stmt);
+
+	/* Create SQL statement */
+	sqlstmt = "DROP TABLE IF EXISTS BATTERSTATS;";
+	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for DROP OK:\n");
+		AddToLog(buffer);
+	}
+	rc = sqlite3_step(m_stmt);
+
+	/* Create SQL statement */
+	sqlstmt = "DROP TABLE IF EXISTS BATTER;";
+	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for DROP OK:\n");
+		AddToLog(buffer);
+	}
+	rc = sqlite3_step(m_stmt);
+
+	/* Create SQL statement */
+	sqlstmt = "DROP TABLE IF EXISTS TEAM;";
+	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for DROP OK:\n");
+		AddToLog(buffer);
+	}
+	rc = sqlite3_step(m_stmt);
+
+	/* Create SQL statement */
+	sqlstmt = "DROP TABLE IF EXISTS DIVISIONS;";
+	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for DROP OK:\n");
+		AddToLog(buffer);
+	}
+	rc = sqlite3_step(m_stmt);
+
+	/* Create SQL statement */
+	sqlstmt = "DROP TABLE IF EXISTS CONFERENCES;";
+	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for DROP OK:\n");
+		AddToLog(buffer);
+	}
+	rc = sqlite3_step(m_stmt);
+
+	/* Create SQL statement */
+	sqlstmt = "DROP TABLE IF EXISTS LEAGUES;";
+	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for DROP OK:\n");
+		AddToLog(buffer);
+	}
+	rc = sqlite3_step(m_stmt);
 }
 
 
@@ -916,7 +1041,7 @@ void CStratOMaticSqLiteDoc::OnSqlDbconvert()
 
 	hCursorWait = AfxGetApp()->LoadStandardCursor(IDC_WAIT);
 
-	CreateDefaultLeague();
+	//CreateDefaultLeague();
 
 	arrayFileNames.RemoveAll();
 	bWorking = myFileFind.FindFile(strLeagueDir + _T("\\TB*.dat"), 0);
@@ -1089,820 +1214,519 @@ void CStratOMaticSqLiteDoc::OnSqlDbconvert()
 }
 
 
-bool CStratOMaticSqLiteDoc::CreateDefaultLeague()
-{
-	SYSTEMTIME lt;
-
-	//// Allocate the League recordset
-	//CLeagues rsLeague(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	//rsLeague.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//	rsLeague.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database League RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Allocate the Conference recordset
-	//CConferences rsConference(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsConference.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Conference RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Allocate the Division recordset
-	//CDivisions rsDivision(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsDivision.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Division RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Create search for duplicate record here.
-	//// Update the filter which is the WHERE portion to find the League.
-	//rsLeague.m_strFilter = "[LeagueName] = 'Base1965'";
-	//// Execute the query
-	//rsLeague.Requery();
-	//// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	//if (!rsLeague.CanUpdate())
-	//{
-	//	AfxMessageBox(_T("Unable to update the League recordset."));
-	//}
-	//if (!rsLeague.GetRecordCount() == 1)
-	//{
-	//	rsLeague.AddNew();
-	//	rsLeague.m_LeagueName = "Base1965";
-	//	rsLeague.m_NumberOfConferences = 2;
-	//	rsLeague.m_NumberOfDivisions = 0;
-	//	rsLeague.m_BaseLeague = TRUE;
-	//	GetLocalTime(&lt);
-	//	rsLeague.m_LastUpdateTime = lt;
-	//	rsLeague.Update();
-
-	//	// Execute the query to retrieve LeagueID
-	//	rsLeague.Requery();
-
-	//	rsConference.AddNew();
-	//	rsConference.m_ConferenceName = "BaseAL1965";
-	//	rsConference.m_LeagueID = rsLeague.m_LeagueID;
-	//	rsConference.m_BaseConference = TRUE;
-	//	GetLocalTime(&lt);
-	//	rsConference.m_LastUpdateTime = lt;
-	//	rsConference.Update();
-
-	//	rsConference.AddNew();
-	//	rsConference.m_ConferenceName = "BaseNL1965";
-	//	rsConference.m_LeagueID = rsLeague.m_LeagueID;
-	//	rsConference.m_BaseConference = TRUE;
-	//	GetLocalTime(&lt);
-	//	rsConference.m_LastUpdateTime = lt;
-	//	rsConference.Update();
-	//}
-
-	//// Update the filter which is the WHERE portion to find the League.
-	//rsLeague.m_strFilter = "[LeagueName] = 'Base1969'";
-	//// Execute the query
-	//rsLeague.Requery();
-	//// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	//if (!rsLeague.GetRecordCount() == 1)
-	//{
-	//	rsLeague.AddNew();
-	//	rsLeague.m_LeagueName = "Base1969";
-	//	rsLeague.m_NumberOfConferences = 2;
-	//	rsLeague.m_NumberOfDivisions = 4;
-	//	rsLeague.m_BaseLeague = TRUE;
-	//	GetLocalTime(&lt);
-	//	rsLeague.m_LastUpdateTime = lt;
-	//	rsLeague.Update();
-
-	//	// Execute the query to retrieve LeagueID
-	//	rsLeague.Requery();
-
-	//	rsConference.AddNew();
-	//	rsConference.m_ConferenceName = "BaseAL1969";
-	//	rsConference.m_LeagueID = rsLeague.m_LeagueID;
-	//	rsConference.m_BaseConference = TRUE;
-	//	GetLocalTime(&lt);
-	//	rsConference.m_LastUpdateTime = lt;
-	//	rsConference.Update();
-
-	//	rsConference.AddNew();
-	//	rsConference.m_ConferenceName = "BaseNL1969";
-	//	rsConference.m_LeagueID = rsLeague.m_LeagueID;
-	//	rsConference.m_BaseConference = TRUE;
-	//	GetLocalTime(&lt);
-	//	rsConference.m_LastUpdateTime = lt;
-	//	rsConference.Update();
-
-	//	// Update the filter which is the WHERE portion to find the League.
-	//	rsConference.m_strFilter = "[ConferenceName] = 'BaseAL1969'";
-	//	// Execute the query
-	//	rsConference.Requery();
-	//	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	//	if (rsConference.GetRecordCount() == 1)
-	//	{
-	//		rsDivision.AddNew();
-	//		rsDivision.m_DivisionName = "BaseALEast1969";
-	//		rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
-	//		rsDivision.m_BaseDivision = TRUE;
-	//		GetLocalTime(&lt);
-	//		rsDivision.m_LastUpdateTime = lt;
-	//		rsDivision.Update();
-
-	//		rsDivision.AddNew();
-	//		rsDivision.m_DivisionName = "BaseALWest1969";
-	//		rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
-	//		rsDivision.m_BaseDivision = TRUE;
-	//		GetLocalTime(&lt);
-	//		rsDivision.m_LastUpdateTime = lt;
-	//		rsDivision.Update();
-	//	}
-
-	//	// Update the filter which is the WHERE portion to find the League.
-	//	rsConference.m_strFilter = "[ConferenceName] = 'BaseNL1969'";
-	//	// Execute the query
-	//	rsConference.Requery();
-	//	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	//	if (rsConference.GetRecordCount() == 1)
-	//	{
-	//		rsDivision.AddNew();
-	//		rsDivision.m_DivisionName = "BaseNLEast1969";
-	//		rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
-	//		rsDivision.m_BaseDivision = TRUE;
-	//		GetLocalTime(&lt);
-	//		rsDivision.m_LastUpdateTime = lt;
-	//		rsDivision.Update();
-
-	//		rsDivision.AddNew();
-	//		rsDivision.m_DivisionName = "BaseNLWest1969";
-	//		rsDivision.m_ConferenceID = rsConference.m_ConferenceID;
-	//		rsDivision.m_BaseDivision = TRUE;
-	//		GetLocalTime(&lt);
-	//		rsDivision.m_LastUpdateTime = lt;
-	//		rsDivision.Update();
-	//	}
-	//}
-	return true;
-}
-
 void CStratOMaticSqLiteDoc::ExportLeagueFileToDB(CString strLeagueDir, CString strTeamName)
 {
-	//SYSTEMTIME lt;
-	//CString SqlString;
-	//CString lLastName;
-	//std::string strLastName;
-	//BatterStruct structBatter;
-	//PitcherStruct structPitcher;
-	//CString tmpTeamID;
-	//CString tmpTeamIDNew;
-	//CString tmpTeamIDBase;
-	//CString tmpLeagueID;
-	//CString tmpLeagueIDBase;
-	//CString myTeam;
-	//CString strDivision;
-	//CString myShortTeam;
-	//CString myBallpark;
-	//CString myYear;
-	//CString strBatterFirstName;
-	//CString strPitcherFirstName;
-	//BYTE count;
-	//CFile exportBatter;
-	//CFile exportPitcher;
-	//CString exportFileName;
-	//CString strexportData;
-	//int i;
-	//CString strTemp;
-	//CString myFileName;
-	//LONG lTeamSection = 74;
-	//LONG lCountSection = 1;
-	//LONG lPlayerSection = structBatter.m_RecordSize;
-	//LONG lPitcherSection = structPitcher.m_RecordSize;
-	//LONG position;
-	//char Bunting[5] = { 'A', 'B', 'C', 'D', 'E' };
-	//char HitRun[4] = { 'A', 'B', 'C', 'D' };
-	//char Stealing[7] = { '3', '2', 'A', 'B', 'C', 'D', 'E' };
-	//char BatterHits[3] = { 'L', 'R', 'S' };
-	//char Power[2] = { 'N', 'W' };
-	//int Running[15] = { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
-	//int TRate[21] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
-	//int Pass[21] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
-	//int OutArm[12] = { -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
-	//int CatchArm[10] = { -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
-	//int PHold[16] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6 };
+	SYSTEMTIME lt;
+	CString SqlString;
+	CStringA lLastName;
+	std::string strLastName;
+	BatterStruct structBatter;
+	PitcherStruct structPitcher;
+	CString tmpTeamID;
+	CString tmpTeamIDNew;
+	CString tmpTeamIDBase;
+	CString tmpLeagueID;
+	CString tmpLeagueIDBase;
+	CStringA myTeam;
+	CString strDivision;
+	CStringA myShortTeam;
+	CStringA myBallpark;
+	CString myYear;
+	CStringA strBatterFirstName;
+	CStringA strPitcherFirstName;
+	BYTE count;
+	CFile exportBatter;
+	CFile exportPitcher;
+	CString exportFileName;
+	CString strexportData;
+	int i;
+	CString strTemp;
+	CString myFileName;
+	LONG lTeamSection = 74;
+	LONG lCountSection = 1;
+	LONG lPlayerSection = structBatter.m_RecordSize;
+	LONG lPitcherSection = structPitcher.m_RecordSize;
+	LONG position;
+	char Bunting[5] = { 'A', 'B', 'C', 'D', 'E' };
+	char HitRun[4] = { 'A', 'B', 'C', 'D' };
+	char Stealing[7] = { '3', '2', 'A', 'B', 'C', 'D', 'E' };
+	char BatterHits[3] = { 'L', 'R', 'S' };
+	char Power[2] = { 'N', 'W' };
+	int Running[15] = { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
+	int TRate[21] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+	int Pass[21] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+	int OutArm[12] = { -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
+	int CatchArm[10] = { -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
+	int PHold[16] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6 };
+	int imyYear;
+	int myteamID = 0;
+	int myteamStatID = 0;
+	int myLeagueID = 0;
+	int myConfID = 0;
+	int myDivisionID = 0;
+	int myBatterID = 0;
+	int myPitcherID = 0;
 
-	//count = 0;
+	count = 0;
 
-	//// Process Batter file
-	//strTemp = "XB" + strTeamName.Left(20);
-	//exportFileName = strDir + "\\" + strTemp + ".txt"; // dir\XB000001.txt
-	//myFileName = strDir + "\\TB" + strTeamName.Right(10);
+	// Process Batter file
+	strTemp = _T("XB") + strTeamName.Left(20);
+	exportFileName = strLeagueDir + _T("\\") + strTemp + _T(".txt"); // dir\XB000001.txt
+	myFileName = strLeagueDir + _T("\\TB") + strTeamName.Right(10);
 
-	//// Allocate the League recordset
-	//CLeagues rsLeague(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsLeague.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database League RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
+	// Process Team entry
+	// Skip "1965 " to start with the actual team name.
+	//AfxExtractSubString(myTeam, structBatter.GetTeamBatter(myFileName), 1, _T(' '));
+	myTeam = structBatter.GetTeamBatter(myFileName).Mid(5).TrimRight(' ');
+	myShortTeam = structBatter.GetShortTeamBatter(myFileName);
+	myBallpark = structBatter.GetBallparkBatter(myFileName);
+	AfxExtractSubString(myYear, structBatter.GetTeamBatter(myFileName), 0, _T(' '));
+	imyYear = _ttoi(myYear);
 
-	//// Allocate the League recordset
-	//CLeagues rsLeagueBase(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsLeagueBase.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database LeagueBase RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
+	// Determine if the team exists in DB.
+	if (myTeam == "Chicago White Sox" && imyYear == 1965)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("65 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Cleveland Indians" && imyYear == 1965)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("65 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Minnesota Twins" && imyYear == 1965)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("65 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Cincinnati Reds" && imyYear == 1965)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("65 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Los Angeles Dodgers" && imyYear == 1965)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("65 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "San Francisco Giants" && imyYear == 1965)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("65 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
 
-	//// Allocate the Conference recordset
-	//CConferences rsConference(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsConference.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Conference RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
+	if (myTeam == "Baltimore Orioles" && imyYear == 1969)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("69 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Seattle Pilots" && imyYear == 1969)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("69 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Washington Senators" && imyYear == 1969)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("69 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Houston Astros" && imyYear == 1969)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("69 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Pittsburg Pirates" && imyYear == 1969)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("69 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "San Diego Padres" && imyYear == 1969)
+	{
+		myLeagueID = GetLeagueID("The Gnews 1998");
+		myConfID = GetConferenceID("69 Conference");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
 
-	//// Allocate the Division recordset
-	//CDivisions rsDivision(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsDivision.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Division RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
+	if (myTeam == "Baltland" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division A");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Bostago" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division A");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Cleonto" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division A");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Seaota" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division A");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Texaheim" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division A");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Yorkcity" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division A");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Cinangeles" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division B");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Florago" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division B");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Montrado" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division B");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "NewDiego" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division B");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "Philanta" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division B");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	if (myTeam == "SanLouis" && imyYear == 1997)
+	{
+		myLeagueID = GetLeagueID("Plano 97 in 99");
+		myConfID = GetConferenceID("Division B");
+		myDivisionID = GetDivisionID("DEFAULT");
+	}
+	myteamID = GetTeamID(myTeam, imyYear, myLeagueID);
+	if (myteamID == 0)
+		TeamInsert(myTeam, myShortTeam, myBallpark, 0, 0, 0, 0, myLeagueID, myConfID, myDivisionID, imyYear, false);
 
-	//// Allocate the Teams recordset
-	//CTeams rsTeam(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsTeam.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Teams RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
+	// If the team waas just created, we need to get its ID
+	myteamStatID = GetTeamID(myTeam, imyYear, myLeagueID);
+	myteamID = GetTeamIDBase(myTeam, imyYear, true);
 
-	//// Allocate the Teams recordset
-	//CTeams rsTeamBase(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsTeamBase.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database rsTeamBase RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
+	// A Team was selected so export all of the players
+	count = structBatter.GetCountBatter(myFileName);
+	for (i = 0; i<count; i++)
+	{
+		position = lTeamSection + (i*lPlayerSection);
+		structBatter.GetBatter(myFileName, position);
 
-	//// Allocate the Batter recordset
-	//CBatter rsBatter(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsBatter.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Batter RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
+		// When the last name is something like O'Tool, the "'" causes a problem
+		// with the SQL search. By editing the string to insert a double "'"
+		// in the search, the search works correctly.
+		lLastName = structBatter.m_PlayerName.Left(structBatter.m_PlayerName.Find(','));
 
-	//// Allocate the Batter Statistics recordset
-	//CBatterStats rsBatterStats(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsBatterStats.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database BatterStats RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
+		// The following was needed for MS Access search but not for sqlite
+		//
+		//std::string str1 = lLastName;
+		////CT2CA pszConvertedAnsiString(lLastName);
+		////std::string str1(pszConvertedAnsiString);
+		//if (str1.find('\'', 0) != std::string::npos)
+		//{
+		//	std::string str2 = str1.substr(0, str1.find('\'', 0));
+		//	// Insert the double "'" in the string.
+		//	str2 = str2 + '\'' + '\'';
+		//	strLastName = str2 + str1.substr((str1.find('\'', 0) + 1), std::string::npos);
+		//}
+		//else
+		//{
+		//	strLastName = lLastName;
+		//	//strLastName = str1;
+		//}
 
-	//// Process Team entry
-	//// Skip "1965 " to start with the actual team name.
-	////AfxExtractSubString(myTeam, structBatter.GetTeamBatter(myFileName), 1, _T(' '));
-	//myTeam = structBatter.GetTeamBatter(myFileName).Mid(5).TrimRight(' ');
-	//myShortTeam = structBatter.GetShortTeamBatter(myFileName);
-	//myBallpark = structBatter.GetBallparkBatter(myFileName);
-	//AfxExtractSubString(myYear, structBatter.GetTeamBatter(myFileName), 0, _T(' '));
+		AfxExtractSubString(myYear, structBatter.GetTeamBatter(myFileName), 0, _T(' '));
 
-	//strDivision = "None";
-	//if (myTeam == "Chicago White Sox" && myYear == "1965")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '65 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Cleveland Indians" && myYear == "1965")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '65 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Minnesota Twins" && myYear == "1965")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '65 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Cincinnati Reds" && myYear == "1965")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '65 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Los Angeles Dodgers" && myYear == "1965")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '65 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "San Francisco Giants" && myYear == "1965")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '65 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
+		strBatterFirstName = structBatter.m_PlayerName.Right(
+			structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(_T(", ")) - 2).TrimRight(' ');
 
-	//if (myTeam == "Baltimore Orioles" && myYear == "1969")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '69 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Seattle Pilots" && myYear == "1969")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '69 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Washington Senators" && myYear == "1969")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '69 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Houston Astros" && myYear == "1969")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '69 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Pittsburg Pirates" && myYear == "1969")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '69 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "San Diego Padres" && myYear == "1969")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'The Gnews 1998'";
-	//	rsConference.m_strFilter = "[ConferenceName] = '69 Conference'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
+		// Create search for duplicate record here.
 
-	//if (myTeam == "Baltland" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division A'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Bostago" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division A'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Cleonto" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division A'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Seaota" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division A'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Texaheim" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division A'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Yorkcity" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division A'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Cinangeles" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division B'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Florago" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division B'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Montrado" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division B'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "NewDiego" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division B'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "Philanta" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division B'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
-	//if (myTeam == "SanLouis" && myYear == "1997")
-	//{
-	//	rsLeague.m_strFilter = "[LeagueName] = 'Plano 97 in 99'";
-	//	rsConference.m_strFilter = "[ConferenceName] = 'Division B'";
-	//	rsDivision.m_strFilter = "[DivisionName] = 'None'";
-	//	strDivision = "None";
-	//}
+		// Update the filter which is the WHERE portion to find the player
+		// based on name and current team.
+		//tmpTeamID.Format("%d", rsTeam.m_TeamID);
+		//rsBatter.m_strFilter = "[FirstName] = '" + strBatterFirstName + "'" +
+		//	" AND [LastName] = '" + strLastName.c_str() + "'" +
+		//	" AND [TeamID] = " + tmpTeamID;
+		//CT2CA pszConvertedAnsiString(strBatterFirstName);
+		//std::string str3(pszConvertedAnsiString);
+		//		myBatterID = GetBatterID(strBatterFirstName, strLastName.c_str(), myteamID);
+		myBatterID = GetBatterID(strBatterFirstName, lLastName, myteamID);
 
-	//rsLeague.Requery();
-	//rsConference.Requery();
-	//rsDivision.Requery();
+		// The following should never happen and this should point to a base team.
+		if (!myBatterID)
+		{
+			// Batter does not exist Therefore add this batter
 
-	//// Determine if the team exists in DB.
-	//// Update the filter which is the WHERE portion
-	//tmpLeagueID.Format("%d", rsLeague.m_LeagueID);
-	//rsTeam.m_strFilter = "[TeamName] = '" + myTeam + "' AND [TeamYear] = '" + myYear +
-	//	"' AND [LeagueID] = " + tmpLeagueID;
-	//// Execute the query
-	//rsTeam.Requery();
+			BatterInsert(
+				strBatterFirstName,
+				lLastName,
+				structBatter.m_Pitcher,
+				structBatter.m_Catcher,
+				structBatter.m_FirstBase,
+				structBatter.m_SecondBase,
+				structBatter.m_ShortStop,
+				structBatter.m_ThirdBase,
+				structBatter.m_LeftField,
+				structBatter.m_CenterField,
+				structBatter.m_RightField,
+				structBatter.m_bBunting,
+				structBatter.m_bHitRun,
+				structBatter.m_bRunning,
+				structBatter.m_bStealing,
+				structBatter.m_bCatchArm,
+				structBatter.m_bOutArm,
+				structBatter.m_bPowerR,
+				structBatter.m_bPowerL,
+				structBatter.m_bPass,
+				structBatter.m_bTRate,
+				structBatter.m_bER1,
+				structBatter.m_bER2,
+				structBatter.m_bER3,
+				structBatter.m_bER4,
+				structBatter.m_bER5,
+				structBatter.m_bER6,
+				structBatter.m_bER7,
+				structBatter.m_bER8,
+				structBatter.m_bER9,
+				structBatter.m_bBatterHits,
+				myteamID,
+				_ttof(structBatter.m_OBChanceHomeRun),
+				_ttof(structBatter.m_OBChanceTriple),
+				_ttof(structBatter.m_OBChanceDouble),
+				_ttof(structBatter.m_OBChanceSingle),
+				_ttof(structBatter.m_OBChanceWalk),
+				_ttof(structBatter.m_ChanceDoublePlay),
+				_ttof(structBatter.m_OBChanceHomeRunRight),
+				_ttof(structBatter.m_OBChanceTripleRight),
+				_ttof(structBatter.m_OBChanceDoubleRight),
+				_ttof(structBatter.m_OBChanceSingleRight),
+				_ttof(structBatter.m_OBChanceWalkRight),
+				_ttof(structBatter.m_ChanceDoublePlayRight),
+				_ttof(structBatter.m_OBChanceHomeRunLeft),
+				_ttof(structBatter.m_OBChanceTripleLeft),
+				_ttof(structBatter.m_OBChanceDoubleLeft),
+				_ttof(structBatter.m_OBChanceSingleLeft),
+				_ttof(structBatter.m_OBChanceWalkLeft),
+				_ttof(structBatter.m_ChanceDoublePlayLeft),
+				_ttof(structBatter.m_OBChanceBasic),
+				_ttof(structBatter.m_OBChanceLeft),
+				_ttof(structBatter.m_OBChanceRight)
+				);
+		}
 
-	//if (!rsTeam.GetRecordCount())
-	//{
-	//	// Need to add the team as this team entry is tied to the player statistics.
-	//	rsTeam.AddNew();
+		//GetLocalTime(&lt);
 
-	//	rsTeam.m_TeamName = myTeam;
-	//	rsTeam.m_TeamNameShort = myShortTeam;
-	//	rsTeam.m_BallparkName = myBallpark;
-	//	rsTeam.m_HomeWins = 0;
-	//	rsTeam.m_HomeLosses = 0;
-	//	rsTeam.m_AwayWins = 0;
-	//	rsTeam.m_AwayLosses = 0;
-	//	rsTeam.m_LeagueID = rsLeague.m_LeagueID;
-	//	rsTeam.m_ConferenceID = rsConference.m_ConferenceID;
-	//	if (strDivision == "None")
-	//		rsTeam.m_DivisionID = 0;
-	//	else
-	//		rsTeam.m_DivisionID = rsDivision.m_DivisionID;
-	//	rsTeam.m_TeamYear = myYear;
+		// Retrieve the ID of the base batter.
+		myBatterID = 0;
+		//		myBatterID = GetBatterID(strBatterFirstName, strLastName.c_str(), myteamID);
+		myBatterID = GetBatterID(strBatterFirstName, lLastName, myteamID);
+		float AVG = 0.0f;
+		float SLG = 0.0f;
+		float OBP = 0.0f;
+		if (structBatter.m_AB == 0)
+		{
+			AVG = 0.0f;
+			SLG = 0.0f;
+			OBP = 0.0f;
+		}
+		else
+		{
+			AVG = (float)structBatter.m_Hits / structBatter.m_AB;
+			SLG = (float)((structBatter.m_Hits - (structBatter.m_2B + structBatter.m_3B + structBatter.m_HomeRuns)) + (2 * structBatter.m_2B) + (3 * structBatter.m_3B) + (4 * structBatter.m_HomeRuns)) / (structBatter.m_AB);
+			OBP = (float)(structBatter.m_Hits + structBatter.m_Walk + structBatter.m_ReachedOnError + structBatter.m_Sacrifice + structBatter.m_StolenBase) / (structBatter.m_AB + structBatter.m_Walk + structBatter.m_ReachedOnError + structBatter.m_Sacrifice + structBatter.m_StolenBase);
+		}
+		// Create test to check for duplicate records here
 
-	//	GetLocalTime(&lt);
-	//	rsTeam.m_LastUpdateTime = lt;
+		if (myBatterID > 0)
+		{
+			BatterStatsInsert(
+				structBatter.m_AB,
+				structBatter.m_Runs,
+				structBatter.m_Hits,
+				structBatter.m_RBI,
+				structBatter.m_2B,
+				structBatter.m_3B,
+				structBatter.m_HomeRuns,
+				structBatter.m_Walk,
+				structBatter.m_StrikeOut,
+				structBatter.m_ReachedOnError,
+				structBatter.m_Sacrifice,
+				structBatter.m_StolenBase,
+				structBatter.m_CS,
+				structBatter.m_Games,
+				structBatter.m_HBP,
+				AVG,
+				SLG,
+				OBP,
+				myBatterID,
+				myteamStatID
+				);
+		}
+		else
+		{
+			// BatterStats already exist.
+			//AfxMessageBox(_T("Database Batter is already in DB: ") + strBatterFirstName + _T(" ") + strLastName.c_str());
+		}
+	}
 
-	//	rsTeam.Update();
-	//}
+	// Process Pitcher file
+	strTemp = _T("XP") + strTeamName.Left(20);
+	exportFileName = strLeagueDir + _T("\\") + strTemp + _T(".txt"); // dir\XB000001.txt
+	myFileName = strLeagueDir + _T("\\TP") + strTeamName.Right(10);
 
-	//// Get Base League information for base LeagueID
-	//if (myYear == "1965")
-	//{
-	//	rsLeagueBase.m_strFilter = "[LeagueName] = 'Base1965'";
-	//}
-	//if (myYear == "1969")
-	//{
-	//	rsLeagueBase.m_strFilter = "[LeagueName] = 'Base1969'";
-	//}
-	//if (myYear == "1997")
-	//{
-	//	rsLeagueBase.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//}
-	//rsLeagueBase.Requery();
-	//tmpLeagueIDBase.Format("%d", rsLeagueBase.m_LeagueID);
+	// A Team was selected so export all of the players
+	count = structPitcher.GetCountPitcher(myFileName);
+	for (i = 0; i<count; i++)
+	{
+		position = lCountSection + (i*lPitcherSection);
+		structPitcher.GetPitcher(myFileName, position);
 
-	//// Update the TeamBase filter
-	//tmpLeagueID.Format("%d", rsLeague.m_LeagueID);
-	//rsTeamBase.m_strFilter = "[TeamName] = '" + myTeam + "' AND [TeamYear] = '" + myYear +
-	//	"' AND [LeagueID] = " + tmpLeagueIDBase;
-	//// Update the filter
-	//tmpLeagueID.Format("%d", rsLeague.m_LeagueID);
-	//rsTeam.m_strFilter = "[TeamName] = '" + myTeam + "' AND [TeamYear] = '" + myYear +
-	//	"' AND [LeagueID] = " + tmpLeagueID;
-	//// Re-Execute the query
-	//rsTeamBase.Requery();
-	//// Save TeamID of base Team
-	//tmpTeamIDBase.Format("%d", rsTeamBase.m_TeamID);
+		//	// When the last name is something like O'Tool, the "'" causes a problem
+		//	// with the SQL search. By editing the string to insert a double "'"
+		//	// in the search, the search works correctly.
+		lLastName = structPitcher.m_PitcherName.Left(structPitcher.m_PitcherName.Find(','));
+		//	std::string str1 = lLastName;
+		//	if (str1.find('\'', 0) != std::string::npos)
+		//	{
+		//		std::string str2 = str1.substr(0, str1.find('\'', 0));
+		//		// Insert the double "'" in the string.
+		//		str2 = str2 + '\'' + '\'';
+		//		strLastName = str2 + str1.substr((str1.find('\'', 0) + 1), std::string::npos);
+		//	}
+		//	else
+		//	{
+		//		strLastName = lLastName;
+		//	}
 
-	//rsTeam.Requery();
-	//if (!rsTeam.GetRecordCount())
-	//{
-	//	// Team does not exist so there is a problem
-	//	AfxMessageBox("Database Added Team Missing RS error: ");
-	//}
+		strPitcherFirstName = structPitcher.m_PitcherName.Right(
+			structPitcher.m_PitcherName.GetLength() - structPitcher.m_PitcherName.Find(_T(", ")) - 2).TrimRight(' ');
 
-	//// Save TeamID of newly entered Team
-	//tmpTeamIDNew.Format("%d", rsTeam.m_TeamID);
+		// Create search for duplicate record here.
+		myPitcherID = 0;
+		myPitcherID = GetPitcherID(strPitcherFirstName, lLastName, myteamID);
 
-	//// A Team was selected so export all of the players
-	//count = structBatter.GetCountBatter(myFileName);
-	//for (i = 0; i<count; i++)
-	//{
-	//	position = lTeamSection + (i*lPlayerSection);
-	//	structBatter.GetBatter(myFileName, position);
+		if (!myPitcherID)
+		{
+			// Batter does not exist Therefore add this batter
+			PitcherInsert(
+				strPitcherFirstName,
+				lLastName,
+				_ttof(structPitcher.m_OBChanceHomeRun),
+				_ttof(structPitcher.m_OBChanceTriple),
+				_ttof(structPitcher.m_OBChanceDouble),
+				_ttof(structPitcher.m_OBChanceSingle),
+				_ttof(structPitcher.m_OBChanceWalk),
+				_ttof(structPitcher.m_ChanceDoublePlay),
+				_ttof(structPitcher.m_OBChanceHomeRunRight),
+				_ttof(structPitcher.m_OBChanceTripleRight),
+				_ttof(structPitcher.m_OBChanceDoubleRight),
+				_ttof(structPitcher.m_OBChanceSingleRight),
+				_ttof(structPitcher.m_OBChanceWalkRight),
+				_ttof(structPitcher.m_ChanceDoublePlayRight),
+				_ttof(structPitcher.m_OBChanceHomeRunLeft),
+				_ttof(structPitcher.m_OBChanceTripleLeft),
+				_ttof(structPitcher.m_OBChanceDoubleLeft),
+				_ttof(structPitcher.m_OBChanceSingleLeft),
+				_ttof(structPitcher.m_OBChanceWalkLeft),
+				_ttof(structPitcher.m_ChanceDoublePlayLeft),
+				_ttof(structPitcher.m_OBChanceBasic),
+				_ttof(structPitcher.m_OBChanceLeft),
+				_ttof(structPitcher.m_OBChanceRight),
+				structPitcher.m_Starter,
+				structPitcher.m_Relief,
+				structPitcher.m_Throws,
+				structPitcher.m_Bunting,
+				structPitcher.m_Hold,
+				structPitcher.m_bWP,
+				structPitcher.m_bBalk,
+				structPitcher.m_PitcherField,
+				structPitcher.m_bER1,
+				myteamID
+				);
+		}
 
-	//	// When the last name is something like O'Tool, the "'" causes a problem
-	//	// with the SQL search. By editing the string to insert a double "'"
-	//	// in the search, the search works correctly.
-	//	lLastName = structBatter.m_PlayerName.Left(structBatter.m_PlayerName.Find(','));
-	//	std::string str1 = lLastName;
-	//	if (str1.find('\'', 0) != std::string::npos)
-	//	{
-	//		std::string str2 = str1.substr(0, str1.find('\'', 0));
-	//		// Insert the double "'" in the string.
-	//		str2 = str2 + '\'' + '\'';
-	//		strLastName = str2 + str1.substr((str1.find('\'', 0) + 1), std::string::npos);
-	//	}
-	//	else
-	//	{
-	//		strLastName = lLastName;
-	//	}
 
-	//	AfxExtractSubString(myYear, structBatter.GetTeamBatter(myFileName), 0, _T(' '));
+		// Retrieve the ID of the base pitcher.
+		myPitcherID = GetPitcherID(strPitcherFirstName, lLastName, myteamID);
 
-	//	strBatterFirstName = structBatter.m_PlayerName.Right(
-	//		structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(", ") - 2).TrimRight(' ');
+		float ERA = 0.0f;
+		float WHIP = 0.0f;
+		if (_ttof(structPitcher.m_IP) == 0)
+		{
+			ERA = 0.0f;
+			WHIP = 0.0f;
+		}
+		else
+		{
+			ERA = (float)(structPitcher.m_ER * 9) / (float)_ttof(structPitcher.m_IP);
+			WHIP = (float)((structPitcher.m_Hits + structPitcher.m_Walks) * 9) / (float)_ttof(structPitcher.m_IP);
+		}
 
-	//	// Create search for duplicate record here.
 
-	//	// Update the filter which is the WHERE portion to find the player
-	//	// based on name and Base team to pick up fixed statistics.
-	//	tmpTeamID.Format("%d", rsTeam.m_TeamID);
-	//	rsBatter.m_strFilter = "[FirstName] = '" + strBatterFirstName + "'" +
-	//		" AND [LastName] = '" + strLastName.c_str() + "'" +
-	//		" AND [TeamID] = " + tmpTeamIDBase;
-	//	// Execute the query
-	//	rsBatter.Requery();
-	//	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	//	if (rsBatter.GetRecordCount() == 1)
-	//	{
-	//		// Batter exists Therefore add statistics to this batter
-
-	//		rsBatterStats.AddNew();
-
-	//		rsBatterStats.m_AB = structBatter.m_AB;
-	//		rsBatterStats.m_Runs = structBatter.m_Runs;
-	//		rsBatterStats.m_Hits = structBatter.m_Hits;
-	//		rsBatterStats.m_RBI = structBatter.m_RBI;
-	//		rsBatterStats.m_2B = structBatter.m_2B;
-	//		rsBatterStats.m_3B = structBatter.m_3B;
-	//		rsBatterStats.m_HomeRuns = structBatter.m_HomeRuns;
-	//		rsBatterStats.m_Walk = structBatter.m_Walk;
-	//		rsBatterStats.m_StrikeOut = structBatter.m_StrikeOut;
-	//		rsBatterStats.m_ReachedOnError = structBatter.m_ReachedOnError;
-	//		rsBatterStats.m_Sacrifice = structBatter.m_Sacrifice;
-	//		rsBatterStats.m_StolenBase = structBatter.m_StolenBase;
-	//		rsBatterStats.m_CS = structBatter.m_CS;
-	//		rsBatterStats.m_Games = structBatter.m_Games;
-	//		rsBatterStats.m_HBP = structBatter.m_HBP;
-	//		if (structBatter.m_AB == 0)
-	//		{
-	//			rsBatterStats.m_AVG = 0.0f;
-	//			rsBatterStats.m_SLG = 0.0f;
-	//			rsBatterStats.m_OBP = 0.0f;
-	//		}
-	//		else
-	//		{
-	//			rsBatterStats.m_AVG = (float)structBatter.m_Hits / structBatter.m_AB;
-	//			rsBatterStats.m_SLG = (float)((structBatter.m_Hits - (structBatter.m_2B + structBatter.m_3B + structBatter.m_HomeRuns)) + (2 * structBatter.m_2B) + (3 * structBatter.m_3B) + (4 * structBatter.m_HomeRuns)) / (structBatter.m_AB);
-	//			rsBatterStats.m_OBP = (float)(structBatter.m_Hits + structBatter.m_Walk + structBatter.m_ReachedOnError + structBatter.m_Sacrifice + structBatter.m_StolenBase) / (structBatter.m_AB + structBatter.m_Walk + structBatter.m_ReachedOnError + structBatter.m_Sacrifice + structBatter.m_StolenBase);
-	//		}
-	//		// BatterID always points back to initial Batter for fixed statistics
-	//		rsBatterStats.m_BatterID = rsBatter.m_BatterID;
-	//		// TeamID can point to any team as this connects the statistics
-	//		// that change based on actual play.
-	//		rsBatterStats.m_TeamID = rsTeam.m_TeamID;
-
-	//		GetLocalTime(&lt);
-	//		rsBatterStats.m_LastUpdateTime = lt;
-
-	//		rsBatterStats.Update();
-	//	}
-	//	else
-	//	{
-	//		// Batter does not exist.
-	//		//AfxMessageBox("Database Batter is missing in DB: " + strBatterFirstName + " " + strLastName.c_str());
-	//	}
-	//}
-	//rsBatterStats.Close();
-	//rsBatter.Close();
-
-	//// Process Pitcher file
-	//strTemp = "XP" + strTeamName.Left(20);
-	//exportFileName = strDir + "\\" + strTemp + ".txt"; // dir\XB000001.txt
-	//myFileName = strDir + "\\TP" + strTeamName.Right(10);
-
-	//// Allocate the Pitcher recordset
-	//CPitcher rsPitcher(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsPitcher.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Pitcher RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Allocate the Pitcher Statistics recordset
-	//CPitcherStats rsPitcherStats(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsPitcherStats.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Pitcher Statistics RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// A Team was selected so export all of the players
-	//count = structPitcher.GetCountPitcher(myFileName);
-	//for (i = 0; i<count; i++)
-	//{
-	//	position = lCountSection + (i*lPitcherSection);
-	//	structPitcher.GetPitcher(myFileName, position);
-
-	//	// When the last name is something like O'Tool, the "'" causes a problem
-	//	// with the SQL search. By editing the string to insert a double "'"
-	//	// in the search, the search works correctly.
-	//	lLastName = structPitcher.m_PitcherName.Left(structPitcher.m_PitcherName.Find(','));
-	//	std::string str1 = lLastName;
-	//	if (str1.find('\'', 0) != std::string::npos)
-	//	{
-	//		std::string str2 = str1.substr(0, str1.find('\'', 0));
-	//		// Insert the double "'" in the string.
-	//		str2 = str2 + '\'' + '\'';
-	//		strLastName = str2 + str1.substr((str1.find('\'', 0) + 1), std::string::npos);
-	//	}
-	//	else
-	//	{
-	//		strLastName = lLastName;
-	//	}
-
-	//	strPitcherFirstName = structPitcher.m_PitcherName.Right(
-	//		structPitcher.m_PitcherName.GetLength() - structPitcher.m_PitcherName.Find(", ") - 2).TrimRight(' ');
-
-	//	// Create search for duplicate record here.
-
-	//	// Update the filter which is the WHERE portion to find the player
-	//	// based on name and current team.
-	//	tmpTeamID.Format("%d", rsTeam.m_TeamID);
-	//	rsPitcher.m_strFilter = "[FirstName] = '" + strPitcherFirstName + "'" +
-	//		" AND [LastName] = '" + strLastName.c_str() + "'" +
-	//		" AND [TeamID] = " + tmpTeamIDBase;
-	//	// Execute the query
-	//	rsPitcher.Requery();
-	//	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	//	if (rsPitcher.GetRecordCount() == 1)
-	//	{
-	//		// Batter exists Therefore add statistics to this pitcher
-
-	//		rsPitcherStats.AddNew();
-
-	//		rsPitcherStats.m_Wins = structPitcher.m_Wins;
-	//		rsPitcherStats.m_Loss = structPitcher.m_Loss;
-	//		rsPitcherStats.m_Saves = structPitcher.m_Saves;
-	//		rsPitcherStats.m_InningsPitched = (float)atof(structPitcher.m_IP);
-	//		rsPitcherStats.m_ER = structPitcher.m_ER;
-	//		rsPitcherStats.m_Hits = structPitcher.m_Hits;
-	//		rsPitcherStats.m_Walks = structPitcher.m_Walks;
-	//		rsPitcherStats.m_Strikeouts = structPitcher.m_Strikeouts;
-	//		rsPitcherStats.m_HomeRuns = structPitcher.m_HomeRuns;
-	//		rsPitcherStats.m_Games = structPitcher.m_Games;
-	//		rsPitcherStats.m_CompleteGames = structPitcher.m_CompGames;
-	//		rsPitcherStats.m_Starts = structPitcher.m_Starts;
-	//		if (atof(structPitcher.m_IP) == 0)
-	//		{
-	//			rsPitcherStats.m_ERA = 0.0f;
-	//			rsPitcherStats.m_WHIP = 0.0f;
-	//		}
-	//		else
-	//		{
-	//			rsPitcherStats.m_ERA = (float)(structPitcher.m_ER * 9) / (float)atof(structPitcher.m_IP);
-	//			rsPitcherStats.m_WHIP = (float)((structPitcher.m_Hits + structPitcher.m_Walks) * 9) / (float)atof(structPitcher.m_IP);
-	//		}
-
-	//		// PitcherID always points back to initial Batter for fixed statistics
-	//		rsPitcherStats.m_PitcherID = rsPitcher.m_PitcherID;
-	//		// TeamID can point to any team as this connects the statistics
-	//		// that change based on actual play.
-	//		rsPitcherStats.m_TeamID = rsTeam.m_TeamID;
-
-	//		GetLocalTime(&lt);
-	//		rsPitcherStats.m_LastUpdateTime = lt;
-
-	//		rsPitcherStats.Update();
-	//	}
-	//	else
-	//	{
-	//		// Pitcher already exists.
-	//		//AfxMessageBox("Database Pitcher is already in DB: " + strPitcherFirstName + " " + strLastName.c_str());
-	//	}
-	//}
-
-	//rsPitcher.Close();
-	//rsPitcherStats.Close();
-	//rsTeamBase.Close();
-	//rsTeam.Close();
-	//rsDivision.Close();
-	//rsConference.Close();
-	//rsLeagueBase.Close();
-	//rsLeague.Close();
+		if (myPitcherID > 0)
+		{
+			// PitcherID always points back to initial Pitcher for fixed statistics
+			// TeamID can point to any team as this connects the statistics
+			// that change based on actual play.
+			PitcherStatsInsert(
+				structPitcher.m_Wins,
+				structPitcher.m_Loss,
+				structPitcher.m_Saves,
+				(float)_ttof(structPitcher.m_IP),
+				structPitcher.m_ER,
+				structPitcher.m_Hits,
+				structPitcher.m_Walks,
+				structPitcher.m_Strikeouts,
+				structPitcher.m_HomeRuns,
+				structPitcher.m_Games,
+				structPitcher.m_CompGames,
+				structPitcher.m_Starts,
+				ERA,
+				WHIP,
+				myPitcherID,
+				myteamStatID
+				);
+		}
+		else
+		{
+			// PitcherStats already exist.
+			//AfxMessageBox("Database Pitcher is already in DB: " + strPitcherFirstName + " " + strLastName.c_str());
+		}
+	}
 }
 
 
@@ -1910,8 +1734,8 @@ void CStratOMaticSqLiteDoc::ExportBaseFileToDB(CString strDir, CString strTeamNa
 {
 	SYSTEMTIME lt;
 	CString SqlString;
-	CString lLastName;
-	CStringA strLastName;
+	CStringA lLastName;
+	std::string strLastName;
 	BatterStruct structBatter;
 	PitcherStruct structPitcher;
 	CString tmpTeamID;
@@ -1922,8 +1746,8 @@ void CStratOMaticSqLiteDoc::ExportBaseFileToDB(CString strDir, CString strTeamNa
 	CStringA myBallpark;
 	CString myYear;
 	int imyYear;
-	CString strBatterFirstName;
-	CString strPitcherFirstName;
+	CStringA strBatterFirstName;
+	CStringA strPitcherFirstName;
 	BYTE count;
 	CFile exportBatter;
 	CFile exportPitcher;
@@ -1952,6 +1776,8 @@ void CStratOMaticSqLiteDoc::ExportBaseFileToDB(CString strDir, CString strTeamNa
 	int myLeagueID = 0;
 	int myConfID = 0;
 	int myDivisionID = 0;
+	int myBatterID = 0;
+	int myPitcherID = 0;
 	count = 0;
 
 	// Process Batter file
@@ -2150,17 +1976,192 @@ void CStratOMaticSqLiteDoc::ExportBaseFileToDB(CString strDir, CString strTeamNa
 		TeamInsert(myTeam, myShortTeam, myBallpark, 0, 0, 0, 0, myLeagueID, myConfID, myDivisionID, imyYear, true);
 	}
 
-	//// A Team was selected so export all of the players
-	//count = structBatter.GetCountBatter(myFileName);
-	//for (i = 0; i<count; i++)
-	//{
-	//	position = lTeamSection + (i*lPlayerSection);
-	//	structBatter.GetBatter(myFileName, position);
+	// If the team waas just created, we need to get its ID
+	myteamID = GetTeamID(myTeam, imyYear);
+
+	// A Team was selected so export all of the players
+	count = structBatter.GetCountBatter(myFileName);
+	for (i = 0; i<count; i++)
+	{
+		position = lTeamSection + (i*lPlayerSection);
+		structBatter.GetBatter(myFileName, position);
+
+		// When the last name is something like O'Tool, the "'" causes a problem
+		// with the SQL search. By editing the string to insert a double "'"
+		// in the search, the search works correctly.
+		lLastName = structBatter.m_PlayerName.Left(structBatter.m_PlayerName.Find(','));
+
+		// The following was needed for MS Access search but not for sqlite
+		//
+		//std::string str1 = lLastName;
+		////CT2CA pszConvertedAnsiString(lLastName);
+		////std::string str1(pszConvertedAnsiString);
+		//if (str1.find('\'', 0) != std::string::npos)
+		//{
+		//	std::string str2 = str1.substr(0, str1.find('\'', 0));
+		//	// Insert the double "'" in the string.
+		//	str2 = str2 + '\'' + '\'';
+		//	strLastName = str2 + str1.substr((str1.find('\'', 0) + 1), std::string::npos);
+		//}
+		//else
+		//{
+		//	strLastName = lLastName;
+		//	//strLastName = str1;
+		//}
+
+		AfxExtractSubString(myYear, structBatter.GetTeamBatter(myFileName), 0, _T(' '));
+
+		strBatterFirstName = structBatter.m_PlayerName.Right(
+			structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(_T(", ")) - 2).TrimRight(' ');
+
+		// Create search for duplicate record here.
+
+		// Update the filter which is the WHERE portion to find the player
+		// based on name and current team.
+		//tmpTeamID.Format("%d", rsTeam.m_TeamID);
+		//rsBatter.m_strFilter = "[FirstName] = '" + strBatterFirstName + "'" +
+		//	" AND [LastName] = '" + strLastName.c_str() + "'" +
+		//	" AND [TeamID] = " + tmpTeamID;
+		//CT2CA pszConvertedAnsiString(strBatterFirstName);
+		//std::string str3(pszConvertedAnsiString);
+//		myBatterID = GetBatterID(strBatterFirstName, strLastName.c_str(), myteamID);
+		myBatterID = GetBatterID(strBatterFirstName, lLastName, myteamID);
+
+		// Execute the query
+		//rsBatter.Requery();
+		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
+		if (!myBatterID)
+		{
+			// Batter does not exist Therefore add this batter
+
+			BatterInsert(
+				strBatterFirstName,
+				lLastName,
+				structBatter.m_Pitcher,
+				structBatter.m_Catcher,
+				structBatter.m_FirstBase,
+				structBatter.m_SecondBase,
+				structBatter.m_ShortStop,
+				structBatter.m_ThirdBase,
+				structBatter.m_LeftField,
+				structBatter.m_CenterField,
+				structBatter.m_RightField,
+				structBatter.m_bBunting,
+				structBatter.m_bHitRun,
+				structBatter.m_bRunning,
+				structBatter.m_bStealing,
+				structBatter.m_bCatchArm,
+				structBatter.m_bOutArm,
+				structBatter.m_bPowerR,
+				structBatter.m_bPowerL,
+				structBatter.m_bPass,
+				structBatter.m_bTRate,
+				structBatter.m_bER1,
+				structBatter.m_bER2,
+				structBatter.m_bER3,
+				structBatter.m_bER4,
+				structBatter.m_bER5,
+				structBatter.m_bER6,
+				structBatter.m_bER7,
+				structBatter.m_bER8,
+				structBatter.m_bER9,
+				structBatter.m_bBatterHits,
+				myteamID,
+				_ttof(structBatter.m_OBChanceHomeRun),
+				_ttof(structBatter.m_OBChanceTriple),
+				_ttof(structBatter.m_OBChanceDouble),
+				_ttof(structBatter.m_OBChanceSingle),
+				_ttof(structBatter.m_OBChanceWalk),
+				_ttof(structBatter.m_ChanceDoublePlay),
+				_ttof(structBatter.m_OBChanceHomeRunRight),
+				_ttof(structBatter.m_OBChanceTripleRight),
+				_ttof(structBatter.m_OBChanceDoubleRight),
+				_ttof(structBatter.m_OBChanceSingleRight),
+				_ttof(structBatter.m_OBChanceWalkRight),
+				_ttof(structBatter.m_ChanceDoublePlayRight),
+				_ttof(structBatter.m_OBChanceHomeRunLeft),
+				_ttof(structBatter.m_OBChanceTripleLeft),
+				_ttof(structBatter.m_OBChanceDoubleLeft),
+				_ttof(structBatter.m_OBChanceSingleLeft),
+				_ttof(structBatter.m_OBChanceWalkLeft),
+				_ttof(structBatter.m_ChanceDoublePlayLeft),
+				_ttof(structBatter.m_OBChanceBasic),
+				_ttof(structBatter.m_OBChanceLeft),
+				_ttof(structBatter.m_OBChanceRight)
+				);
+		}
+
+			//GetLocalTime(&lt);
+
+		// Retrieve the ID of the batter that was just inserted.
+		myBatterID = 0;
+//		myBatterID = GetBatterID(strBatterFirstName, strLastName.c_str(), myteamID);
+		myBatterID = GetBatterID(strBatterFirstName, lLastName, myteamID);
+		float AVG = 0.0f;
+		float SLG = 0.0f;
+		float OBP = 0.0f;
+		if (structBatter.m_AB == 0)
+		{
+			AVG = 0.0f;
+			SLG = 0.0f;
+			OBP = 0.0f;
+		}
+		else
+		{
+			AVG = (float)structBatter.m_Hits / structBatter.m_AB;
+			SLG = (float)((structBatter.m_Hits - (structBatter.m_2B + structBatter.m_3B + structBatter.m_HomeRuns)) + (2 * structBatter.m_2B) + (3 * structBatter.m_3B) + (4 * structBatter.m_HomeRuns)) / (structBatter.m_AB);
+			OBP = (float)(structBatter.m_Hits + structBatter.m_Walk + structBatter.m_ReachedOnError + structBatter.m_Sacrifice + structBatter.m_StolenBase) / (structBatter.m_AB + structBatter.m_Walk + structBatter.m_ReachedOnError + structBatter.m_Sacrifice + structBatter.m_StolenBase);
+		}
+		// Create test to check for duplicate records here
+
+		if (myBatterID > 0)
+		{
+			BatterStatsInsert(
+				structBatter.m_AB,
+				structBatter.m_Runs,
+				structBatter.m_Hits,
+				structBatter.m_RBI,
+				structBatter.m_2B,
+				structBatter.m_3B,
+				structBatter.m_HomeRuns,
+				structBatter.m_Walk,
+				structBatter.m_StrikeOut,
+				structBatter.m_ReachedOnError,
+				structBatter.m_Sacrifice,
+				structBatter.m_StolenBase,
+				structBatter.m_CS,
+				structBatter.m_Games,
+				structBatter.m_HBP,
+				AVG,
+				SLG,
+				OBP,
+				myBatterID,
+				myteamID
+			);
+		}
+		else
+		{
+			// Batter already exists.
+			//AfxMessageBox(_T("Database Batter is already in DB: ") + strBatterFirstName + _T(" ") + strLastName.c_str());
+		}
+	}
+
+	// Process Pitcher file
+	strTemp = _T("XP") + strTeamName.Left(20);
+	exportFileName = strDir + _T("\\") + strTemp + _T(".txt"); // dir\XB000001.txt
+	myFileName = strDir + _T("\\TP") + strTeamName.Right(10);
+
+	// A Team was selected so export all of the players
+	count = structPitcher.GetCountPitcher(myFileName);
+	for (i = 0; i<count; i++)
+	{
+		position = lCountSection + (i*lPitcherSection);
+		structPitcher.GetPitcher(myFileName, position);
 
 	//	// When the last name is something like O'Tool, the "'" causes a problem
 	//	// with the SQL search. By editing the string to insert a double "'"
 	//	// in the search, the search works correctly.
-	//	lLastName = structBatter.m_PlayerName.Left(structBatter.m_PlayerName.Find(','));
+		lLastName = structPitcher.m_PitcherName.Left(structPitcher.m_PitcherName.Find(','));
 	//	std::string str1 = lLastName;
 	//	if (str1.find('\'', 0) != std::string::npos)
 	//	{
@@ -2174,337 +2175,101 @@ void CStratOMaticSqLiteDoc::ExportBaseFileToDB(CString strDir, CString strTeamNa
 	//		strLastName = lLastName;
 	//	}
 
-	//	AfxExtractSubString(myYear, structBatter.GetTeamBatter(myFileName), 0, _T(' '));
+		strPitcherFirstName = structPitcher.m_PitcherName.Right(
+			structPitcher.m_PitcherName.GetLength() - structPitcher.m_PitcherName.Find(_T(", ")) - 2).TrimRight(' ');
 
-	//	strBatterFirstName = structBatter.m_PlayerName.Right(
-	//		structBatter.m_PlayerName.GetLength() - structBatter.m_PlayerName.Find(", ") - 2).TrimRight(' ');
+		// Create search for duplicate record here.
+		myPitcherID = 0;
+		myPitcherID = GetPitcherID(strPitcherFirstName, lLastName, myteamID);
 
-	//	// Create search for duplicate record here.
+		if (!myPitcherID)
+		{
+			// Batter does not exist Therefore add this batter
+			PitcherInsert(
+				strPitcherFirstName,
+				lLastName,
+				_ttof(structPitcher.m_OBChanceHomeRun),
+				_ttof(structPitcher.m_OBChanceTriple),
+				_ttof(structPitcher.m_OBChanceDouble),
+				_ttof(structPitcher.m_OBChanceSingle),
+				_ttof(structPitcher.m_OBChanceWalk),
+				_ttof(structPitcher.m_ChanceDoublePlay),
+				_ttof(structPitcher.m_OBChanceHomeRunRight),
+				_ttof(structPitcher.m_OBChanceTripleRight),
+				_ttof(structPitcher.m_OBChanceDoubleRight),
+				_ttof(structPitcher.m_OBChanceSingleRight),
+				_ttof(structPitcher.m_OBChanceWalkRight),
+				_ttof(structPitcher.m_ChanceDoublePlayRight),
+				_ttof(structPitcher.m_OBChanceHomeRunLeft),
+				_ttof(structPitcher.m_OBChanceTripleLeft),
+				_ttof(structPitcher.m_OBChanceDoubleLeft),
+				_ttof(structPitcher.m_OBChanceSingleLeft),
+				_ttof(structPitcher.m_OBChanceWalkLeft),
+				_ttof(structPitcher.m_ChanceDoublePlayLeft),
+				_ttof(structPitcher.m_OBChanceBasic),
+				_ttof(structPitcher.m_OBChanceLeft),
+				_ttof(structPitcher.m_OBChanceRight),
+				structPitcher.m_Starter,
+				structPitcher.m_Relief,
+				structPitcher.m_Throws,
+				structPitcher.m_Bunting,
+				structPitcher.m_Hold,
+				structPitcher.m_bWP,
+				structPitcher.m_bBalk,
+				structPitcher.m_PitcherField,
+				structPitcher.m_bER1,
+				myteamID
+				);
+		}
 
-	//	// Update the filter which is the WHERE portion to find the player
-	//	// based on name and current team.
-	//	tmpTeamID.Format("%d", rsTeam.m_TeamID);
-	//	rsBatter.m_strFilter = "[FirstName] = '" + strBatterFirstName + "'" +
-	//		" AND [LastName] = '" + strLastName.c_str() + "'" +
-	//		" AND [TeamID] = " + tmpTeamID;
-	//	// Execute the query
-	//	rsBatter.Requery();
-	//	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	//	if (!rsBatter.GetRecordCount() == 1)
-	//	{
-	//		// Batter does not exist Therefore add this batter
 
-	//		rsBatter.AddNew();
+		// Retrieve the ID of the pitcher that was just inserted.
+		myPitcherID = GetPitcherID(strPitcherFirstName, lLastName, myteamID);
 
-	//		rsBatter.m_LastName = lLastName;
-	//		rsBatter.m_FirstName = strBatterFirstName;
-	//		rsBatter.m_Pitcher = structBatter.m_Pitcher;
-	//		rsBatter.m_Catcher = structBatter.m_Catcher;
-	//		rsBatter.m_FirstBase = structBatter.m_FirstBase;
-	//		rsBatter.m_SecondBase = structBatter.m_SecondBase;
-	//		rsBatter.m_ShortStop = structBatter.m_ShortStop;
-	//		rsBatter.m_ThirdBase = structBatter.m_ThirdBase;
-	//		rsBatter.m_LeftField = structBatter.m_LeftField;
-	//		rsBatter.m_CenterField = structBatter.m_CenterField;
-	//		rsBatter.m_RightField = structBatter.m_RightField;
-	//		rsBatter.m_Bunting = structBatter.m_bBunting;
-	//		rsBatter.m_HitRun = structBatter.m_bHitRun;
-	//		rsBatter.m_Running = structBatter.m_bRunning;
-	//		rsBatter.m_Stealing = structBatter.m_bStealing;
-	//		rsBatter.m_CatchArm = structBatter.m_bCatchArm;
-	//		rsBatter.m_OutArm = structBatter.m_bOutArm;
-	//		rsBatter.m_PowerRight = structBatter.m_bPowerR;
-	//		rsBatter.m_PowerLeft = structBatter.m_bPowerL;
-	//		rsBatter.m_Pass = structBatter.m_bPass;
-	//		rsBatter.m_TRate = structBatter.m_bTRate;
-	//		rsBatter.m_ER1 = structBatter.m_bER1;
-	//		rsBatter.m_ER2 = structBatter.m_bER2;
-	//		rsBatter.m_ER3 = structBatter.m_bER3;
-	//		rsBatter.m_ER4 = structBatter.m_bER4;
-	//		rsBatter.m_ER5 = structBatter.m_bER5;
-	//		rsBatter.m_ER6 = structBatter.m_bER6;
-	//		rsBatter.m_ER7 = structBatter.m_bER7;
-	//		rsBatter.m_ER8 = structBatter.m_bER8;
-	//		rsBatter.m_ER9 = structBatter.m_bER9;
-	//		rsBatter.m_OBChanceHomeRun = structBatter.m_OBChanceHomeRun;
-	//		rsBatter.m_OBChanceTriple = structBatter.m_OBChanceTriple;
-	//		rsBatter.m_OBChanceDouble = structBatter.m_OBChanceDouble;
-	//		rsBatter.m_OBChanceSingle = structBatter.m_OBChanceSingle;
-	//		rsBatter.m_OBChanceWalk = structBatter.m_OBChanceWalk;
-	//		rsBatter.m_ChanceDoublePlay = structBatter.m_ChanceDoublePlay;
-	//		rsBatter.m_OBChanceHomeRunRight = structBatter.m_OBChanceHomeRunRight;
-	//		rsBatter.m_OBChanceTripleRight = structBatter.m_OBChanceTripleRight;
-	//		rsBatter.m_OBChanceDoubleRight = structBatter.m_OBChanceDoubleRight;
-	//		rsBatter.m_OBChanceSingleRight = structBatter.m_OBChanceSingleRight;
-	//		rsBatter.m_OBChanceWalkRight = structBatter.m_OBChanceWalkRight;
-	//		rsBatter.m_ChanceDoublePlayRight = structBatter.m_ChanceDoublePlayRight;
-	//		rsBatter.m_OBChanceHomeRunLeft = structBatter.m_OBChanceHomeRunLeft;
-	//		rsBatter.m_OBChanceTripleLeft = structBatter.m_OBChanceTripleLeft;
-	//		rsBatter.m_OBChanceDoubleLeft = structBatter.m_OBChanceDoubleLeft;
-	//		rsBatter.m_OBChanceSingleLeft = structBatter.m_OBChanceSingleLeft;
-	//		rsBatter.m_OBChanceWalkLeft = structBatter.m_OBChanceWalkLeft;
-	//		rsBatter.m_ChanceDoublePlayLeft = structBatter.m_ChanceDoublePlayLeft;
-	//		rsBatter.m_OBChanceBasic = structBatter.m_OBChanceBasic;
-	//		rsBatter.m_OBChanceLeft = structBatter.m_OBChanceLeft;
-	//		rsBatter.m_OBChanceRight = structBatter.m_OBChanceRight;
-	//		rsBatter.m_BatterHits = structBatter.m_bBatterHits;
-	//		rsBatter.m_TeamID = rsTeam.m_TeamID;
+		float ERA = 0.0f;
+		float WHIP = 0.0f;
+		if (_ttof(structPitcher.m_IP) == 0)
+		{
+			ERA = 0.0f;
+			WHIP = 0.0f;
+		}
+		else
+		{
+			ERA = (float)(structPitcher.m_ER * 9) / (float)_ttof(structPitcher.m_IP);
+			WHIP = (float)((structPitcher.m_Hits + structPitcher.m_Walks) * 9) / (float)_ttof(structPitcher.m_IP);
+		}
 
-	//		GetLocalTime(&lt);
-	//		rsBatter.m_LastUpdateTime = lt;
 
-	//		rsBatter.Update();
-
-	//		// Retrieve the ID of the batter that was just inserted.
-
-	//		// Update the filter which is the WHERE portion to find the player
-	//		// based on name and current team.
-	//		tmpTeamID.Format("%d", rsTeam.m_TeamID);
-	//		rsBatter.m_strFilter = "[FirstName] = '" + strBatterFirstName + "'" +
-	//			" AND [LastName] = '" + strLastName.c_str() + "'" +
-	//			" AND [TeamID] = " + tmpTeamID;
-	//		// Execute the query
-	//		rsBatter.Requery();
-	//		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	//		if (!rsBatter.GetRecordCount() == 1)
-	//		{
-	//			// Batter does not exist so there is a problem
-	//			AfxMessageBox("Database Requery of batter incorrect RS error: ");
-	//		}
-
-	//		// Create test to check for duplicate records here
-
-	//		rsBatterStats.AddNew();
-
-	//		rsBatterStats.m_AB = structBatter.m_AB;
-	//		rsBatterStats.m_Runs = structBatter.m_Runs;
-	//		rsBatterStats.m_Hits = structBatter.m_Hits;
-	//		rsBatterStats.m_RBI = structBatter.m_RBI;
-	//		rsBatterStats.m_2B = structBatter.m_2B;
-	//		rsBatterStats.m_3B = structBatter.m_3B;
-	//		rsBatterStats.m_HomeRuns = structBatter.m_HomeRuns;
-	//		rsBatterStats.m_Walk = structBatter.m_Walk;
-	//		rsBatterStats.m_StrikeOut = structBatter.m_StrikeOut;
-	//		rsBatterStats.m_ReachedOnError = structBatter.m_ReachedOnError;
-	//		rsBatterStats.m_Sacrifice = structBatter.m_Sacrifice;
-	//		rsBatterStats.m_StolenBase = structBatter.m_StolenBase;
-	//		rsBatterStats.m_CS = structBatter.m_CS;
-	//		rsBatterStats.m_Games = structBatter.m_Games;
-	//		rsBatterStats.m_HBP = structBatter.m_HBP;
-	//		if (structBatter.m_AB == 0)
-	//		{
-	//			rsBatterStats.m_AVG = 0.0f;
-	//			rsBatterStats.m_SLG = 0.0f;
-	//			rsBatterStats.m_OBP = 0.0f;
-	//		}
-	//		else
-	//		{
-	//			rsBatterStats.m_AVG = (float)structBatter.m_Hits / structBatter.m_AB;
-	//			rsBatterStats.m_SLG = (float)((structBatter.m_Hits - (structBatter.m_2B + structBatter.m_3B + structBatter.m_HomeRuns)) + (2 * structBatter.m_2B) + (3 * structBatter.m_3B) + (4 * structBatter.m_HomeRuns)) / (structBatter.m_AB);
-	//			rsBatterStats.m_OBP = (float)(structBatter.m_Hits + structBatter.m_Walk + structBatter.m_ReachedOnError + structBatter.m_Sacrifice + structBatter.m_StolenBase) / (structBatter.m_AB + structBatter.m_Walk + structBatter.m_ReachedOnError + structBatter.m_Sacrifice + structBatter.m_StolenBase);
-	//		}
-	//		// BatterID always points back to initial Batter for fixed statistics
-	//		rsBatterStats.m_BatterID = rsBatter.m_BatterID;
-	//		// TeamID can point to any team as this connects the statistics
-	//		// that change based on actual play.
-	//		rsBatterStats.m_TeamID = rsTeam.m_TeamID;
-
-	//		GetLocalTime(&lt);
-	//		rsBatterStats.m_LastUpdateTime = lt;
-
-	//		rsBatterStats.Update();
-	//	}
-	//	else
-	//	{
-	//		// Batter already exists.
-	//		//AfxMessageBox("Database Batter is already in DB: " + strBatterFirstName + " " + strLastName.c_str());
-	//	}
-	//}
-	//rsBatterStats.Close();
-	//rsBatter.Close();
-
-	//// Process Pitcher file
-	//strTemp = "XP" + strTeamName.Left(20);
-	//exportFileName = strDir + "\\" + strTemp + ".txt"; // dir\XB000001.txt
-	//myFileName = strDir + "\\TP" + strTeamName.Right(10);
-
-	//// Allocate the Pitcher recordset
-	//CPitcher rsPitcher(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsPitcher.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Pitcher RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// Allocate the Pitcher Statistics recordset
-	//CPitcherStats rsPitcherStats(&m_pDatabase);
-	//TRY
-	//{
-	//	// Execute the query
-	//	rsPitcherStats.Open(CRecordset::dynaset, NULL, CRecordset::none);
-	//}
-	//	CATCH(CDBException, e)
-	//{
-	//	// If a database exception occured, show error msg
-	//	AfxMessageBox("Database Pitcher Statistics RS error: " + e->m_strError);
-	//}
-	//END_CATCH;
-
-	//// A Team was selected so export all of the players
-	//count = structPitcher.GetCountPitcher(myFileName);
-	//for (i = 0; i<count; i++)
-	//{
-	//	position = lCountSection + (i*lPitcherSection);
-	//	structPitcher.GetPitcher(myFileName, position);
-
-	//	// When the last name is something like O'Tool, the "'" causes a problem
-	//	// with the SQL search. By editing the string to insert a double "'"
-	//	// in the search, the search works correctly.
-	//	lLastName = structPitcher.m_PitcherName.Left(structPitcher.m_PitcherName.Find(','));
-	//	std::string str1 = lLastName;
-	//	if (str1.find('\'', 0) != std::string::npos)
-	//	{
-	//		std::string str2 = str1.substr(0, str1.find('\'', 0));
-	//		// Insert the double "'" in the string.
-	//		str2 = str2 + '\'' + '\'';
-	//		strLastName = str2 + str1.substr((str1.find('\'', 0) + 1), std::string::npos);
-	//	}
-	//	else
-	//	{
-	//		strLastName = lLastName;
-	//	}
-
-	//	strPitcherFirstName = structPitcher.m_PitcherName.Right(
-	//		structPitcher.m_PitcherName.GetLength() - structPitcher.m_PitcherName.Find(", ") - 2).TrimRight(' ');
-
-	//	// Create search for duplicate record here.
-
-	//	// Update the filter which is the WHERE portion to find the player
-	//	// based on name and current team.
-	//	tmpTeamID.Format("%d", rsTeam.m_TeamID);
-	//	rsPitcher.m_strFilter = "[FirstName] = '" + strPitcherFirstName + "'" +
-	//		" AND [LastName] = '" + strLastName.c_str() + "'" +
-	//		" AND [TeamID] = " + tmpTeamID;
-	//	// Execute the query
-	//	rsPitcher.Requery();
-	//	// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	//	if (!rsPitcher.GetRecordCount() == 1)
-	//	{
-	//		// Batter does not exist Therefore add this batter
-
-	//		rsPitcher.AddNew();
-
-	//		rsPitcher.m_FirstName = strPitcherFirstName;
-	//		rsPitcher.m_LastName = lLastName;
-	//		rsPitcher.m_OBChanceHomeRun = structPitcher.m_OBChanceHomeRun;
-	//		rsPitcher.m_OBChanceTriple = structPitcher.m_OBChanceTriple;
-	//		rsPitcher.m_OBChanceDouble = structPitcher.m_OBChanceDouble;
-	//		rsPitcher.m_OBChanceSingle = structPitcher.m_OBChanceSingle;
-	//		rsPitcher.m_OBChanceWalk = structPitcher.m_OBChanceWalk;
-	//		rsPitcher.m_ChanceDoublePlay = structPitcher.m_ChanceDoublePlay;
-	//		rsPitcher.m_OBChanceHomeRunRight = structPitcher.m_OBChanceHomeRunRight;
-	//		rsPitcher.m_OBChanceTripleRight = structPitcher.m_OBChanceTripleRight;
-	//		rsPitcher.m_OBChanceDoubleRight = structPitcher.m_OBChanceDoubleRight;
-	//		rsPitcher.m_OBChanceSingleRight = structPitcher.m_OBChanceSingleRight;
-	//		rsPitcher.m_OBChanceWalkRight = structPitcher.m_OBChanceWalkRight;
-	//		rsPitcher.m_ChanceDoublePlayRight = structPitcher.m_ChanceDoublePlayRight;
-	//		rsPitcher.m_OBChanceHomeRunLeft = structPitcher.m_OBChanceHomeRunLeft;
-	//		rsPitcher.m_OBChanceTripleLeft = structPitcher.m_OBChanceTripleLeft;
-	//		rsPitcher.m_OBChanceDoubleLeft = structPitcher.m_OBChanceDoubleLeft;
-	//		rsPitcher.m_OBChanceSingleLeft = structPitcher.m_OBChanceSingleLeft;
-	//		rsPitcher.m_OBChanceWalkLeft = structPitcher.m_OBChanceWalkLeft;
-	//		rsPitcher.m_ChanceDoublePlayLeft = structPitcher.m_ChanceDoublePlayLeft;
-	//		rsPitcher.m_OBChanceBasic = structPitcher.m_OBChanceBasic;
-	//		rsPitcher.m_OBChanceLeft = structPitcher.m_OBChanceLeft;
-	//		rsPitcher.m_OBChanceRight = structPitcher.m_OBChanceRight;
-	//		rsPitcher.m_Starter = structPitcher.m_Starter;
-	//		rsPitcher.m_Relief = structPitcher.m_Relief;
-	//		rsPitcher.m_Throws = structPitcher.m_Throws;
-	//		rsPitcher.m_Bunting = structPitcher.m_Bunting;
-	//		rsPitcher.m_Hold = structPitcher.m_Hold;
-	//		rsPitcher.m_WP = structPitcher.m_bWP;
-	//		rsPitcher.m_Balk = structPitcher.m_bBalk;
-	//		rsPitcher.m_PitcherField = structPitcher.m_PitcherField;
-	//		rsPitcher.m_ER1 = structPitcher.m_bER1;
-	//		rsPitcher.m_TeamID = rsTeam.m_TeamID;
-
-	//		GetLocalTime(&lt);
-	//		rsPitcher.m_LastUpdateTime = lt;
-
-	//		rsPitcher.Update();
-
-	//		// Retrieve the ID of the pitcher that was just inserted.
-
-	//		// Update the filter which is the WHERE portion to find the player
-	//		// based on name and current team.
-	//		tmpTeamID.Format("%d", rsTeam.m_TeamID);
-	//		rsPitcher.m_strFilter = "[FirstName] = '" + strPitcherFirstName + "'" +
-	//			" AND [LastName] = '" + strLastName.c_str() + "'" +
-	//			" AND [TeamID] = " + tmpTeamID;
-	//		// Execute the query
-	//		rsPitcher.Requery();
-	//		// RowSetSize defaults to 1 so 1 or more matched rows will always result in 1
-	//		if (!rsPitcher.GetRecordCount() == 1)
-	//		{
-	//			// Batter does not exist so there is a problem
-	//			AfxMessageBox("Database Requery of pitcher incorrect RS error: ");
-	//		}
-
-	//		rsPitcherStats.AddNew();
-
-	//		rsPitcherStats.m_Wins = structPitcher.m_Wins;
-	//		rsPitcherStats.m_Loss = structPitcher.m_Loss;
-	//		rsPitcherStats.m_Saves = structPitcher.m_Saves;
-	//		rsPitcherStats.m_InningsPitched = (float)atof(structPitcher.m_IP);
-	//		rsPitcherStats.m_ER = structPitcher.m_ER;
-	//		rsPitcherStats.m_Hits = structPitcher.m_Hits;
-	//		rsPitcherStats.m_Walks = structPitcher.m_Walks;
-	//		rsPitcherStats.m_Strikeouts = structPitcher.m_Strikeouts;
-	//		rsPitcherStats.m_HomeRuns = structPitcher.m_HomeRuns;
-	//		rsPitcherStats.m_Games = structPitcher.m_Games;
-	//		rsPitcherStats.m_CompleteGames = structPitcher.m_CompGames;
-	//		rsPitcherStats.m_Starts = structPitcher.m_Starts;
-	//		if (atof(structPitcher.m_IP) == 0)
-	//		{
-	//			rsPitcherStats.m_ERA = 0.0f;
-	//			rsPitcherStats.m_WHIP = 0.0f;
-	//		}
-	//		else
-	//		{
-	//			rsPitcherStats.m_ERA = (float)(structPitcher.m_ER * 9) / (float)atof(structPitcher.m_IP);
-	//			rsPitcherStats.m_WHIP = (float)((structPitcher.m_Hits + structPitcher.m_Walks) * 9) / (float)atof(structPitcher.m_IP);
-	//		}
-
-	//		// PitcherID always points back to initial Batter for fixed statistics
-	//		rsPitcherStats.m_PitcherID = rsPitcher.m_PitcherID;
-	//		// TeamID can point to any team as this connects the statistics
-	//		// that change based on actual play.
-	//		rsPitcherStats.m_TeamID = rsTeam.m_TeamID;
-
-	//		GetLocalTime(&lt);
-	//		rsPitcherStats.m_LastUpdateTime = lt;
-
-	//		rsPitcherStats.Update();
-	//	}
-	//	else
-	//	{
-	//		// Pitcher already exists.
-	//		//AfxMessageBox("Database Pitcher is already in DB: " + strPitcherFirstName + " " + strLastName.c_str());
-	//	}
-	//}
-
-	//rsPitcher.Close();
-	//rsPitcherStats.Close();
-	//rsTeam.Close();
-	//rsDivision.Close();
-	//rsConference.Close();
-	//rsLeague.Close();
+		if (myPitcherID > 0)
+		{
+			// PitcherID always points back to initial Pitcher for fixed statistics
+			// TeamID can point to any team as this connects the statistics
+			// that change based on actual play.
+			PitcherStatsInsert(
+				structPitcher.m_Wins,
+				structPitcher.m_Loss,
+				structPitcher.m_Saves,
+				(float)_ttof(structPitcher.m_IP),
+				structPitcher.m_ER,
+				structPitcher.m_Hits,
+				structPitcher.m_Walks,
+				structPitcher.m_Strikeouts,
+				structPitcher.m_HomeRuns,
+				structPitcher.m_Games,
+				structPitcher.m_CompGames,
+				structPitcher.m_Starts,
+				ERA,
+				WHIP,
+				myPitcherID,
+				myteamID
+				);
+		}
+		else
+		{
+			// Pitcher already exists.
+			//AfxMessageBox("Database Pitcher is already in DB: " + strPitcherFirstName + " " + strLastName.c_str());
+		}
+	}
 }
 
 
@@ -2519,6 +2284,8 @@ void CStratOMaticSqLiteDoc::OnSqlInsertDefaultLeague()
 	LeagueInsert("Base1969", 2, 4, true);
 	LeagueInsert("Base1997", 2, 6, true);
 	LeagueInsert("Base Plano 97 in 99", 2, 0, true);
+	LeagueInsert("The Gnews 1998", 2, 0, false);
+	LeagueInsert("Plano 97 in 99", 2, 0, false);
 
 	// Select the LeagueId
 	myLeagueID = GetLeagueID("DEFAULT");
@@ -2589,8 +2356,6 @@ void CStratOMaticSqLiteDoc::OnSqlInsertDefaultLeague()
 			DivisionInsert("BaseNLCentral1997", myLeagueID, myConfID, true);
 		}
 	}
-	//		rsLeague.m_strFilter = "[LeagueName] = 'Base Plano 97 in 99'";
-	//		rsConference.m_strFilter = "[ConferenceName] = 'Base Division A'";
 
 	myLeagueID = 0;
 	myConfID = 0;
@@ -2602,6 +2367,30 @@ void CStratOMaticSqLiteDoc::OnSqlInsertDefaultLeague()
 	{
 		ConferenceInsert("Base Division A", myLeagueID, true);
 		ConferenceInsert("Base Division B", myLeagueID, true);
+	}
+
+	myLeagueID = 0;
+	myConfID = 0;
+
+	// Select the LeagueId
+	myLeagueID = GetLeagueID("The Gnews 1998");
+
+	if (myLeagueID != 0)
+	{
+		ConferenceInsert("65 Conference", myLeagueID, false);
+		ConferenceInsert("69 Conference", myLeagueID, false);
+	}
+
+	myLeagueID = 0;
+	myConfID = 0;
+
+	// Select the LeagueId
+	myLeagueID = GetLeagueID("Plano 97 in 99");
+
+	if (myLeagueID != 0)
+	{
+		ConferenceInsert("Division A", myLeagueID, false);
+		ConferenceInsert("Division B", myLeagueID, false);
 	}
 }
 
@@ -3119,6 +2908,112 @@ int CStratOMaticSqLiteDoc::GetTeamID(CStringA strTeamName, int Year)
 	if (rc != SQLITE_OK)
 	{
 		sprintf_s(buffer, sizeof(buffer), "Could not bind year: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	rc = sqlite3_step(m_stmt);
+
+	if (rc == SQLITE_ROW)
+	{
+		sprintf_s(buffer, sizeof(buffer), "%s  %i\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_int(m_stmt, 0));
+		AddToLog(buffer);
+		myTeamId = sqlite3_column_int(m_stmt, 0);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Select returned nothing: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	return myTeamId;
+}
+
+int CStratOMaticSqLiteDoc::GetTeamID(CStringA strTeamName, int Year, int LeagueID)
+{
+	int myTeamId = 0;
+	int rc;
+	CHAR buffer[100];
+	char *sqlSelect;
+
+	sqlSelect = "SELECT TeamId from TEAM WHERE TeamName = ?1 and TeamYear = ?2 and LeagueID = ?3";
+
+	rc = sqlite3_prepare_v2(m_db, sqlSelect, strlen(sqlSelect), &m_stmt, 0);
+
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	// Bind the data to field '1' which is the first '?' in the SELECT statement
+	rc = sqlite3_bind_text(m_stmt, 1, strTeamName, strlen(strTeamName), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind teamname: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 2, Year);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind year: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 3, LeagueID);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind LeagueID: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	rc = sqlite3_step(m_stmt);
+
+	if (rc == SQLITE_ROW)
+	{
+		sprintf_s(buffer, sizeof(buffer), "%s  %i\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_int(m_stmt, 0));
+		AddToLog(buffer);
+		myTeamId = sqlite3_column_int(m_stmt, 0);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Select returned nothing: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	return myTeamId;
+}
+
+int CStratOMaticSqLiteDoc::GetTeamIDBase(CStringA strTeamName, int Year, bool Base)
+{
+	int myTeamId = 0;
+	int rc;
+	CHAR buffer[100];
+	char *sqlSelect;
+
+	sqlSelect = "SELECT TeamId from TEAM WHERE TeamName = ?1 and TeamYear = ?2 and BaseTeam = ?3";
+
+	rc = sqlite3_prepare_v2(m_db, sqlSelect, strlen(sqlSelect), &m_stmt, 0);
+
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	// Bind the data to field '1' which is the first '?' in the SELECT statement
+	rc = sqlite3_bind_text(m_stmt, 1, strTeamName, strlen(strTeamName), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind teamname: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 2, Year);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind year: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 3, Base);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind Base: %s\n", sqlite3_errmsg(m_db));
 		AddToLog(buffer);
 	}
 
@@ -3832,7 +3727,7 @@ int CStratOMaticSqLiteDoc::GetBatterID(CStringA strFirstName, CStringA strLastNa
 	int rc;
 	CHAR buffer[100];
 	char *sqlSelect;
-	int myBatterID;
+	int myBatterID = 0;
 	sqlSelect = "SELECT BatterID from BATTER WHERE FirstName = ?1 and LastName = ?2";
 
 	rc = sqlite3_prepare_v2(m_db, sqlSelect, strlen(sqlSelect), &m_stmt, 0);
@@ -3876,13 +3771,68 @@ int CStratOMaticSqLiteDoc::GetBatterID(CStringA strFirstName, CStringA strLastNa
 	return myBatterID;
 }
 
+int CStratOMaticSqLiteDoc::GetBatterID(CStringA strFirstName, CStringA strLastName, int TeamID)
+{
+	int rc;
+	CHAR buffer[100];
+	char *sqlSelect;
+	int myBatterID = 0;
+//	sqlSelect = "SELECT BatterID from BATTER AS B JOIN TEAM AS T ON C.TeamID=T.TeamID WHERE FirstName = ?1 and LastName = ?2 and TeamID = ?3";
+	sqlSelect = "SELECT BatterID from BATTER WHERE FirstName = ?1 and LastName = ?2 and TeamID = ?3";
+
+	rc = sqlite3_prepare_v2(m_db, sqlSelect, strlen(sqlSelect), &m_stmt, 0);
+
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	// Bind the data to field '1' which is the first '?' in the SELECT statement
+	rc = sqlite3_bind_text(m_stmt, 1, strFirstName, strlen(strFirstName), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind strFirstName: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_text(m_stmt, 2, strLastName, strlen(strLastName), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind strLastName: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 3, TeamID);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind TeamID: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	rc = sqlite3_step(m_stmt);
+
+	if (rc == SQLITE_ROW)
+	{
+		sprintf_s(buffer, sizeof(buffer), "%s  %i\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_int(m_stmt, 0));
+		AddToLog(buffer);
+		myBatterID = sqlite3_column_int(m_stmt, 0);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Select returned nothing: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	sqlite3_finalize(m_stmt);
+
+	return myBatterID;
+}
 
 int CStratOMaticSqLiteDoc::GetPitcherID(CStringA strFirstName, CStringA strLastName)
 {
 	int rc;
 	CHAR buffer[100];
 	char *sqlSelect;
-	int myPitcherID;
+	int myPitcherID = 0;
 
 	sqlSelect = "SELECT PitcherID from PITCHER WHERE FirstName = ?1 and LastName = ?2";
 
@@ -3905,6 +3855,62 @@ int CStratOMaticSqLiteDoc::GetPitcherID(CStringA strFirstName, CStringA strLastN
 	if (rc != SQLITE_OK)
 	{
 		sprintf_s(buffer, sizeof(buffer), "Could not bind strLastName: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	rc = sqlite3_step(m_stmt);
+
+	if (rc == SQLITE_ROW)
+	{
+		sprintf_s(buffer, sizeof(buffer), "%s  %i\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_int(m_stmt, 0));
+		AddToLog(buffer);
+		myPitcherID = sqlite3_column_int(m_stmt, 0);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Select returned nothing: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	sqlite3_finalize(m_stmt);
+
+	return myPitcherID;
+}
+
+int CStratOMaticSqLiteDoc::GetPitcherID(CStringA strFirstName, CStringA strLastName, int TeamID)
+{
+	int rc;
+	CHAR buffer[100];
+	char *sqlSelect;
+	int myPitcherID = 0;
+
+	sqlSelect = "SELECT PitcherID from PITCHER WHERE FirstName = ?1 and LastName = ?2 and TeamID = ?3";
+
+	rc = sqlite3_prepare_v2(m_db, sqlSelect, strlen(sqlSelect), &m_stmt, 0);
+
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	// Bind the data to field '1' which is the first '?' in the SELECT statement
+	rc = sqlite3_bind_text(m_stmt, 1, strFirstName, strlen(strFirstName), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind strFirstName: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_text(m_stmt, 2, strLastName, strlen(strLastName), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind strLastName: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 3, TeamID);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind TeamID: %s\n", sqlite3_errmsg(m_db));
 		AddToLog(buffer);
 	}
 
