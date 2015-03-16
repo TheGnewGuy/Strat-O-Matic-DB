@@ -4258,7 +4258,7 @@ int CStratOMaticSqLiteDoc::PitcherInsert(CStringA strFirstName, CStringA strLast
 }
 
 
-int CStratOMaticSqLiteDoc::PitcherStatsInsert(int Wins, int Loss, int Saves, int InningsPitched, int ER, int Hits, int Walks, 
+int CStratOMaticSqLiteDoc::PitcherStatsInsert(int Wins, int Loss, int Saves, float InningsPitched, int ER, int Hits, int Walks, 
 	int Strikeouts, int HomeRuns, int Games, int CompleteGames, int Starts, float ERA, float WHIP, int PitcherID, int TeamID)
 {
 	int rc;
@@ -4336,7 +4336,7 @@ int CStratOMaticSqLiteDoc::PitcherStatsInsert(int Wins, int Loss, int Saves, int
 		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
 		AddToLog(buffer);
 	}
-	rc = sqlite3_bind_int(m_stmt, 4, InningsPitched);
+	rc = sqlite3_bind_double(m_stmt, 4, InningsPitched);
 	if (rc != SQLITE_OK)
 	{
 		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
