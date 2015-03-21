@@ -303,6 +303,7 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"NumberOfConferences   INT      NOT NULL DEFAULT 0," \
 		"NumberOfDivisions     INT      NOT NULL DEFAULT 0," \
 		"BaseLeague            BOOL     NOT NULL DEFAULT FALSE," \
+		"LeagueYear            INT      NOT NULL DEFAULT 1800," \
 		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP" \
 		");";
@@ -2287,13 +2288,13 @@ void CStratOMaticSqLiteDoc::OnSqlInsertDefaultLeague()
 	int myLeagueID = 0;
 	int myConfID = 0;
 
-	LeagueInsert("DEFAULT", 1, 1, true);
-	LeagueInsert("Base1965", 2, 0, true);
-	LeagueInsert("Base1969", 2, 4, true);
-	LeagueInsert("Base1997", 2, 6, true);
-	LeagueInsert("Base Plano 97 in 99", 2, 0, true);
-	LeagueInsert("The Gnews 1998", 2, 0, false);
-	LeagueInsert("Plano 97 in 99", 2, 0, false);
+	LeagueInsert("DEFAULT", 1, 1, true, 1800);
+	LeagueInsert("Base1965", 2, 0, true, 1965);
+	LeagueInsert("Base1969", 2, 4, true, 1969);
+	LeagueInsert("Base1997", 2, 6, true, 1997);
+	LeagueInsert("Base Plano 97 in 99", 2, 0, true, 1999);
+	LeagueInsert("The Gnews 1998", 2, 0, false, 1998);
+	LeagueInsert("Plano 97 in 99", 2, 0, false, 1999);
 
 	// Select the LeagueId
 	myLeagueID = GetLeagueID("DEFAULT");
@@ -2403,7 +2404,7 @@ void CStratOMaticSqLiteDoc::OnSqlInsertDefaultLeague()
 }
 
 
-int CStratOMaticSqLiteDoc::LeagueInsert(CStringA strName, int NumberConf, int NumDivisions, bool Base)
+int CStratOMaticSqLiteDoc::LeagueInsert(CStringA strName, int NumberConf, int NumDivisions, bool Base, int Year)
 {
 	char *sqlLeague;
 	int rc;
@@ -2414,13 +2415,15 @@ int CStratOMaticSqLiteDoc::LeagueInsert(CStringA strName, int NumberConf, int Nu
 		"LeagueName," \
 		"NumberOfConferences," \
 		"NumberOfDivisions," \
-		"BaseLeague" \
+		"BaseLeague," \
+		"LeagueYear"
 		")" \
 		"VALUES (" \
 		"?1," \
 		"?2," \
 		"?3," \
-		"?4" \
+		"?4," \
+		"?5"
 		");";
 
 	rc = sqlite3_prepare_v2(m_db, sqlLeague, strlen(sqlLeague), &m_stmt, 0);
@@ -2457,6 +2460,12 @@ int CStratOMaticSqLiteDoc::LeagueInsert(CStringA strName, int NumberConf, int Nu
 		AddToLog(buffer);
 	}
 	rc = sqlite3_bind_int(m_stmt, 4, Base);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 5, Year);
 	if (rc != SQLITE_OK)
 	{
 		sprintf_s(buffer, sizeof(buffer), "Could not bind int: %s\n", sqlite3_errmsg(m_db));

@@ -64,7 +64,7 @@ public:
 	void ExportLeagueFileToDB(CString strLeagueDir, CString strteamName);
 	void ExportBaseFileToDB(CString strDir, CString strTeamName);
 	afx_msg void OnSqlInsertDefaultLeague();
-	int LeagueInsert(CStringA strName, int NumberConf, int NumDivisions, bool Base);
+	int LeagueInsert(CStringA strName, int NumberConf, int NumDivisions, bool Base, int Year);
 	int ConferenceInsert(CStringA strConfName, int LeagueID, bool Base);
 	int GetLeagueID(CStringA strLeagueName);
 	int DivisionInsert(CStringA strDivisionName, int LeagueID, int ConferenceID, bool Base);
