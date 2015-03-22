@@ -304,6 +304,7 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"NumberOfDivisions     INT      NOT NULL DEFAULT 0," \
 		"BaseLeague            BOOL     NOT NULL DEFAULT FALSE," \
 		"LeagueYear            INT      NOT NULL DEFAULT 1800," \
+		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE," \
 		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP" \
 		");";
@@ -343,6 +344,7 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"ConferenceName        TEXT     NOT NULL," \
 		"LeagueID              INTEGER  NOT NULL," \
 		"BaseConference        BOOL     NOT NULL DEFAULT FALSE," \
+		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE," \
 		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"FOREIGN KEY(LeagueID) REFERENCES LEAGUES(LeagueID)" \
@@ -384,6 +386,7 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"LeagueID              INTEGER  NOT NULL," \
 		"ConferenceID          INTEGER  NOT NULL," \
 		"BaseDivisions         BOOL     NOT NULL DEFAULT FALSE," \
+		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE," \
 		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"FOREIGN KEY(LeagueID) REFERENCES LEAGUES(LeagueID)," \
@@ -425,15 +428,18 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"TeamName              TEXT     NOT NULL," \
 		"TeamNameShort         TEXT     NOT NULL," \
 		"BallparkName          TEXT     NOT NULL," \
-		"HomeWins              INT      NOT NULL," \
-		"HomeLosses            INT      NOT NULL," \
-		"AwayWins              INT      NOT NULL," \
-		"AwayLosses            INT      NOT NULL," \
+		"TotalWins             INT      NOT NULL DEFAULT 0," \
+		"TotalLosses           INT      NOT NULL DEFAULT 0," \
+		"HomeWins              INT      NOT NULL DEFAULT 0," \
+		"HomeLosses            INT      NOT NULL DEFAULT 0," \
+		"AwayWins              INT      NOT NULL DEFAULT 0," \
+		"AwayLosses            INT      NOT NULL DEFAULT 0," \
 		"LeagueID              INTEGER  NOT NULL," \
 		"ConferenceID          INTEGER  NOT NULL," \
 		"DivisionID            INTEGER  NOT NULL," \
 		"TeamYear              INT      NOT NULL," \
 		"BaseTeam              BOOL     NOT NULL DEFAULT FALSE," \
+		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE," \
 		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"FOREIGN KEY(LeagueID) REFERENCES LEAGUES(LeagueID)" \
@@ -525,6 +531,7 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"OBChanceBasic         FLOAT    NOT NULL," \
 		"OBChanceLeft          FLOAT    NOT NULL," \
 		"OBChanceRight         FLOAT    NOT NULL," \
+		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE," \
 		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"FOREIGN KEY(TeamID) REFERENCES TEAM(TeamID)" \
@@ -581,6 +588,7 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"OBP                   FLOAT    NOT NULL," \
 		"BatterID              INTEGER  NOT NULL," \
 		"TeamID                INTEGER  NOT NULL," \
+		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE," \
 		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"FOREIGN KEY(BatterID) REFERENCES BATTER(BatterID)," \
@@ -651,6 +659,7 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"Pitcher               INT      NOT NULL," \
 		"ER1                   INT      NOT NULL," \
 		"TeamID                INTEGER  NOT NULL," \
+		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE," \
 		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"FOREIGN KEY(TeamID) REFERENCES TEAM(TeamID)" \
@@ -703,6 +712,7 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"WHIP                  FLOAT    NOT NULL," \
 		"PitcherID             INTEGER  NOT NULL," \
 		"TeamID                INTEGER  NOT NULL," \
+		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE," \
 		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
 		"FOREIGN KEY(PitcherID) REFERENCES PITCHER(PitcherID)," \
