@@ -757,9 +757,10 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 		"HTMLLinkColor         TEXT     NOT NULL DEFAULT Blue, " \
 		"HTMLVLinkColor        TEXT     NOT NULL DEFAULT Purple, " \
 		"LeagueID              INTEGER  NOT NULL, " \
-		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE," \
-		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
-		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP" \
+		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE, " \
+		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, " \
+		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, " \
+		"FOREIGN KEY(LeagueID) REFERENCES LEAGUES(LeagueID)" \
 		");";
 	rc = sqlite3_prepare_v2(m_db, sqlOptions, -1, &m_stmt, 0);
 	if (rc != SQLITE_OK)
@@ -816,6 +817,8 @@ void CStratOMaticSqLiteDoc::OnSqlDeleteTable()
 	}
 	rc = sqlite3_step(m_stmt);
 
+	sqlite3_finalize(m_stmt);
+
 	/* Create SQL statement */
 	sqlstmt = "DROP TABLE IF EXISTS PITCHER;";
 	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
@@ -830,6 +833,8 @@ void CStratOMaticSqLiteDoc::OnSqlDeleteTable()
 		AddToLog(buffer);
 	}
 	rc = sqlite3_step(m_stmt);
+
+	sqlite3_finalize(m_stmt);
 
 	/* Create SQL statement */
 	sqlstmt = "DROP TABLE IF EXISTS BATTERSTATS;";
@@ -846,6 +851,8 @@ void CStratOMaticSqLiteDoc::OnSqlDeleteTable()
 	}
 	rc = sqlite3_step(m_stmt);
 
+	sqlite3_finalize(m_stmt);
+
 	/* Create SQL statement */
 	sqlstmt = "DROP TABLE IF EXISTS BATTER;";
 	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
@@ -860,6 +867,8 @@ void CStratOMaticSqLiteDoc::OnSqlDeleteTable()
 		AddToLog(buffer);
 	}
 	rc = sqlite3_step(m_stmt);
+
+	sqlite3_finalize(m_stmt);
 
 	/* Create SQL statement */
 	sqlstmt = "DROP TABLE IF EXISTS TEAM;";
@@ -876,6 +885,8 @@ void CStratOMaticSqLiteDoc::OnSqlDeleteTable()
 	}
 	rc = sqlite3_step(m_stmt);
 
+	sqlite3_finalize(m_stmt);
+
 	/* Create SQL statement */
 	sqlstmt = "DROP TABLE IF EXISTS DIVISIONS;";
 	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
@@ -890,6 +901,8 @@ void CStratOMaticSqLiteDoc::OnSqlDeleteTable()
 		AddToLog(buffer);
 	}
 	rc = sqlite3_step(m_stmt);
+
+	sqlite3_finalize(m_stmt);
 
 	/* Create SQL statement */
 	sqlstmt = "DROP TABLE IF EXISTS CONFERENCES;";
@@ -906,6 +919,25 @@ void CStratOMaticSqLiteDoc::OnSqlDeleteTable()
 	}
 	rc = sqlite3_step(m_stmt);
 
+	sqlite3_finalize(m_stmt);
+
+	/* Create SQL statement */
+	sqlstmt = "DROP TABLE IF EXISTS LEAGUEOPTIONS;";
+	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for DROP OK:\n");
+		AddToLog(buffer);
+	}
+	rc = sqlite3_step(m_stmt);
+
+	sqlite3_finalize(m_stmt);
+
 	/* Create SQL statement */
 	sqlstmt = "DROP TABLE IF EXISTS LEAGUES;";
 	rc = sqlite3_prepare_v2(m_db, sqlstmt, strlen(sqlstmt), &m_stmt, 0);
@@ -920,6 +952,8 @@ void CStratOMaticSqLiteDoc::OnSqlDeleteTable()
 		AddToLog(buffer);
 	}
 	rc = sqlite3_step(m_stmt);
+
+	sqlite3_finalize(m_stmt);
 }
 
 
@@ -2342,12 +2376,33 @@ void CStratOMaticSqLiteDoc::OnSqlInsertDefaultLeague()
 	int myConfID = 0;
 
 	LeagueInsert("DEFAULT", 1, 1, true, 1800);
+	myLeagueID = GetLeagueID("DEFAULT");
+	LeagueInsertOptions(myLeagueID, "images/background.jpg", "index.html", "Black", "White", "Blue", "Purple");
+
 	LeagueInsert("Base1965", 2, 0, true, 1965);
+	myLeagueID = GetLeagueID("Base1965");
+	LeagueInsertOptions(myLeagueID, "images/background.jpg", "index.html", "Black", "White", "Blue", "Purple");
+
 	LeagueInsert("Base1969", 2, 4, true, 1969);
+	myLeagueID = GetLeagueID("Base1969");
+	LeagueInsertOptions(myLeagueID, "images/background.jpg", "index.html", "Black", "White", "Blue", "Purple");
+
 	LeagueInsert("Base1997", 2, 6, true, 1997);
+	myLeagueID = GetLeagueID("Base1997");
+	LeagueInsertOptions(myLeagueID, "images/background.jpg", "index.html", "Black", "White", "Blue", "Purple");
+
 	LeagueInsert("Base Plano 97 in 99", 2, 0, true, 1999);
+	myLeagueID = GetLeagueID("Base Plano 97 in 99");
+	LeagueInsertOptions(myLeagueID, "images/background.jpg", "index.html", "Black", "White", "Blue", "Purple");
+
 	LeagueInsert("The Gnews 1998", 2, 0, false, 1998);
+	myLeagueID = GetLeagueID("The Gnews 1998");
+	LeagueInsertOptions(myLeagueID, "images/background.jpg", "index.html", "Black", "White", "Blue", "Purple");
+
 	LeagueInsert("Plano 97 in 99", 2, 0, false, 1999);
+	myLeagueID = GetLeagueID("Plano 97 in 99");
+	LeagueInsertOptions(myLeagueID, "images/background.jpg", "index.html", "Black", "White", "Blue", "Purple");
+
 
 	// Select the LeagueId
 	myLeagueID = GetLeagueID("DEFAULT");
@@ -2529,6 +2584,99 @@ int CStratOMaticSqLiteDoc::LeagueInsert(CStringA strName, int NumberConf, int Nu
 	return 0;
 }
 
+int CStratOMaticSqLiteDoc::LeagueInsertOptions(int LeagueID, 
+	CStringA HTMLBackgroundPicture,
+	CStringA HTMLIndex,
+	CStringA HTMLTextColor,
+	CStringA HTMLBGColor,
+	CStringA HTMLLinkColor,
+	CStringA HTMLVLinkColor	)
+{
+	char *sqlLeague;
+	int rc;
+	CHAR buffer[100];
+
+	/* Create SQL statement */
+	sqlLeague = "INSERT INTO LEAGUEOPTIONS("  \
+		"HTMLBackgroundPicture," \
+		"HTMLIndex," \
+		"HTMLTextColor," \
+		"HTMLBGColor," \
+		"HTMLLinkColor," \
+		"HTMLVLinkColor," \
+		"LeagueID" \
+		")" \
+		"VALUES (" \
+		"?1," \
+		"?2," \
+		"?3," \
+		"?4," \
+		"?5," \
+		"?6," \
+		"?7"
+		");";
+
+	rc = sqlite3_prepare_v2(m_db, sqlLeague, strlen(sqlLeague), &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+
+		//fprintf(stderr, "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for LEAGUES Insert OK: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	// Bind the data to field '1' which is the first '?' in the INSERT statement
+	rc = sqlite3_bind_text(m_stmt, 1, HTMLBackgroundPicture, strlen(HTMLBackgroundPicture), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind HTMLBackgroundPicture: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_text(m_stmt, 2, HTMLIndex, strlen(HTMLIndex), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind HTMLIndex: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_text(m_stmt, 3, HTMLTextColor, strlen(HTMLTextColor), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind HTMLTextColor: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_text(m_stmt, 4, HTMLBGColor, strlen(HTMLBGColor), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind HTMLBGColor: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_text(m_stmt, 5, HTMLLinkColor, strlen(HTMLLinkColor), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind HTMLLinkColor: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_text(m_stmt, 6, HTMLVLinkColor, strlen(HTMLVLinkColor), SQLITE_STATIC);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind HTMLVLinkColor: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	rc = sqlite3_bind_int(m_stmt, 7, LeagueID);
+	if (rc != SQLITE_OK)
+	{
+		sprintf_s(buffer, sizeof(buffer), "Could not bind LeagueID: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	rc = sqlite3_step(m_stmt);
+	return 0;
+}
 
 int CStratOMaticSqLiteDoc::ConferenceInsert(CStringA strConfName, int LeagueID, bool Base)
 {

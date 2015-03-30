@@ -84,4 +84,6 @@ public:
 	int GetPitcherID(CStringA strFirstName, CStringA strLastName, int TeamID);
 	int GetTeamID(CStringA strTeamName, int Year, int LeagueID);
 	int GetTeamIDBase(CStringA strTeamName, int Year, bool Base);
+	int LeagueInsertOptions(int LeagueID, CStringA HTMLBackgroundPicture, CStringA HTMLIndex,
+		CStringA HTMLTextColor, CStringA HTMLBGColor, CStringA HTMLLinkColor, CStringA HTMLVLinkColor);
 };
