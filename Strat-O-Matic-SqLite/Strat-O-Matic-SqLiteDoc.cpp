@@ -747,6 +747,49 @@ void CStratOMaticSqLiteDoc::OnSqlCreateTable()
 	}
 
 	sqlite3_finalize(m_stmt);
+
+	char *sqlOptions = "CREATE TABLE LEAGUEOPTIONS("  \
+		"LeagueOptionsID       INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " \
+		"HTMLBackgroundPicture TEXT     NOT NULL DEFAULT NotSet, " \
+		"HTMLIndex             TEXT     NOT NULL DEFAULT NotSet, " \
+		"HTMLTextColor         TEXT     NOT NULL DEFAULT Black, " \
+		"HTMLBGColor           TEXT     NOT NULL DEFAULT White, " \
+		"HTMLLinkColor         TEXT     NOT NULL DEFAULT Blue, " \
+		"HTMLVLinkColor        TEXT     NOT NULL DEFAULT Purple, " \
+		"LeagueID              INTEGER  NOT NULL, " \
+		"ActiveRec             BOOL     NOT NULL DEFAULT TRUE," \
+		"CreateTime            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," \
+		"LastUpdateTime        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP" \
+		");";
+	rc = sqlite3_prepare_v2(m_db, sqlOptions, -1, &m_stmt, 0);
+	if (rc != SQLITE_OK)
+	{
+
+		//fprintf(stderr, "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		sprintf_s(buffer, sizeof(buffer), "Failed to fetch data: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Prepare for Options Create OK: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+
+	rc = sqlite3_step(m_stmt);
+
+	if (rc != SQLITE_DONE)
+	{
+		//printf("%s  %s\n", sqlite3_column_name(m_stmt, 0), sqlite3_column_text(m_stmt, 0));
+		sprintf_s(buffer, sizeof(buffer), "Failed to insert item: %s\n", sqlite3_errmsg(m_db));
+		AddToLog(buffer);
+	}
+	else
+	{
+		sprintf_s(buffer, sizeof(buffer), "Step for Options Create OK: \n");
+		AddToLog(buffer);
+	}
+
+	sqlite3_finalize(m_stmt);
 }
 
 
